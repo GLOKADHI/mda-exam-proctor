@@ -1,0 +1,15 @@
+# Build & bundle directories
+dist/
+build/
+.sandbox_build/
+node_modules/
+__pycache__/
+*.pyc
+
+# Local session credentials & runtime logs
+cookie.txt
+settings.json
+proctor_events.json
+test_records.json
+bug_reports.txt
+*.exe

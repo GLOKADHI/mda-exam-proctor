@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "ProctorIQ Session & Cookie Helper",
+  "version": "1.2.0",
+  "description": "Extracts LeetCode & Taufa.ai session cookies and syncs them directly into your ProctorIQ Quiz App.",
+  "permissions": [
+    "cookies"
+  ],
+  "host_permissions": [
+    "*://taufa.ai/*",
+    "*://*.taufa.ai/*",
+    "*://leetcode.com/*",
+    "*://*.leetcode.com/*",
+    "http://localhost:3000/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "ProctorIQ Session Helper"
+  }
+}

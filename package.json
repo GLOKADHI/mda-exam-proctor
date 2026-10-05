@@ -1,0 +1,35 @@
+{
+    "version": "1.0.0",
+    "name": "quiz-app",
+    "description": "AI Quiz & Chatbot powered by Taufa.ai",
+    "scripts": {
+        "start": "node server.js",
+        "build": "pkg server.js --targets node18-win-x64 --output dist/QuizApp.exe"
+    },
+    "bin": "server.js",
+    "pkg": {
+        "outputPath": "dist",
+        "assets": [
+            "index.html",
+            "style.css",
+            "highlight.css",
+            "marked.min.js",
+            "highlight.min.js",
+            "config.js",
+            "api.js",
+            "app.js",
+            "chat.js",
+            "quiz.js",
+            "proctor.js",
+            "cookie.txt"
+        ],
+        "targets": [
+            "node18-win-x64"
+        ]
+    },
+    "main": "server.js",
+    "dependencies": {
+        "highlight.js": "^11.12.0",
+        "marked": "^18.0.14"
+    }
+}

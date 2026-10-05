@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ProctorIQ Session Helper</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      width: 380px;
+      padding: 16px;
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #090a10;
+      color: #e2e8f0;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header h1 {
+      font-size: 15px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ffa116, #38bdf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .header-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(255,161,22,0.15);
+      color: #ffa116;
+      border: 1px solid rgba(255,161,22,0.3);
+    }
+    .desc {
+      font-size: 11.5px;
+      color: #94a3b8;
+      margin-bottom: 14px;
+      line-height: 1.4;
+    }
+    .sync-all-btn {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: linear-gradient(135deg, #ffa116, #ea580c);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(234, 88, 12, 0.25);
+    }
+    .sync-all-btn:hover {
+      opacity: 0.95;
+      transform: translateY(-1px);
+    }
+    .card {
+      background: #11131f;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+    .card.leetcode {
+      border-left: 3px solid #ffa116;
+    }
+    .card.taufa {
+      border-left: 3px solid #8b5cf6;
+    }
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .card-title {
+      font-size: 12.5px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .card-title.lc { color: #ffa116; }
+    .card-title.tf { color: #a78bfa; }
+    .card-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+    .card-badge.found {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .card-badge.missing {
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    .card-meta {
+      font-size: 11px;
+      color: #94a3b8;
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+    .btn-row {
+      display: flex;
+      gap: 6px;
+    }
+    .btn-action {
+      flex: 1;
+      padding: 7px 10px;
+      border-radius: 6px;
+      border: none;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: all 0.15s;
+    }
+    .btn-lc {
+      background: #ffa116;
+      color: #000;
+    }
+    .btn-lc:hover { background: #ffb443; }
+    .btn-tf {
+      background: #7c3aed;
+      color: #fff;
+    }
+    .btn-tf:hover { background: #8b5cf6; }
+    .btn-sec {
+      background: #1e2030;
+      color: #cbd5e1;
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 7px 10px;
+    }
+    .btn-sec:hover { background: #282b40; }
+    #status {
+      font-size: 11.5px;
+      padding: 8px 10px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      display: none;
+      line-height: 1.4;
+    }
+    #status.success {
+      display: block;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid #10b981;
+      color: #34d399;
+    }
+    #status.warn {
+      display: block;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid #f59e0b;
+      color: #fbbf24;
+    }
+    #status.error {
+      display: block;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid #ef4444;
+      color: #f87171;
+    }
+    .footer-note {
+      font-size: 10px;
+      color: #64748b;
+      text-align: center;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-left">
+      <span style="font-size: 20px;">⚡</span>
+      <div>
+        <h1>ProctorIQ Session Helper</h1>
+      </div>
+    </div>
+    <span class="header-badge">v1.2</span>
+  </div>
+
+  <p class="desc">
+    Auto-extracts active session cookies from <strong>leetcode.com</strong> and <strong>taufa.ai</strong> and updates <code>cookie.txt</code> & your ProctorIQ Desktop App.
+  </p>
+
+  <div id="status"></div>
+
+  <!-- Master Sync Button -->
+  <button id="btnSyncAll" class="sync-all-btn">
+    <span>🌟</span>
+    <span>One-Click Sync Both (LeetCode + Taufa)</span>
+  </button>
+
+  <!-- Card 1: LeetCode -->
+  <div class="card leetcode">
+    <div class="card-top">
+      <span class="card-title lc">
+        <span>💻</span>
+        <span>LeetCode Session</span>
+      </span>
+      <span id="badgeLc" class="card-badge missing">Checking...</span>
+    </div>
+    <div class="card-meta" id="infoLc">Searching active session on leetcode.com...</div>
+    <div class="btn-row">
+      <button id="btnSyncLc" class="btn-action btn-lc">
+        <span>⚡</span>
+        <span>Sync to cookie.txt</span>
+      </button>
+      <button id="btnCopyLc" class="btn-action btn-sec">
+        <span>📋</span>
+        <span>Copy</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Card 2: Taufa.ai -->
+  <div class="card taufa">
+    <div class="card-top">
+      <span class="card-title tf">
+        <span>🤖</span>
+        <span>Taufa.ai Session</span>
+      </span>
+      <span id="badgeTf" class="card-badge missing">Checking...</span>
+    </div>
+    <div class="card-meta" id="infoTf">Searching active cookies on taufa.ai...</div>
+    <div class="btn-row">
+      <button id="btnSyncTf" class="btn-action btn-tf">
+        <span>🚀</span>
+        <span>Sync to cookie.txt</span>
+      </button>
+      <button id="btnCopyTf" class="btn-action btn-sec">
+        <span>📋</span>
+        <span>Copy</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    Syncs live via <code>http://localhost:3000/api/save-cookie</code> into <code>cookie.txt</code>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

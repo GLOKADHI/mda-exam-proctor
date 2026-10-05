@@ -1,0 +1,2319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MdaExamBrowser • Secure Proctored Examination Suite</title>
+  <link rel="icon" type="image/x-icon" href="mda_exam_logo.ico" />
+  <link rel="stylesheet" href="highlight.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ===== GLOBAL NAVIGATION BAR ===== -->
+  <header class="app-navbar">
+    <div class="nav-container">
+      <div class="nav-brand" onclick="goHome()">
+        <div class="brand-icon" style="padding: 2px; overflow: hidden; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14);">
+          <img src="mda_exam_logo.png" alt="MdaExamBrowser Logo" style="width: 100%; height: 100%; object-fit: contain; border-radius: 8px;" />
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">Mda<span class="gradient-accent">ExamBrowser</span></span>
+          <span class="brand-sub">Secure Proctoring Suite</span>
+        </div>
+      </div>
+
+      <nav class="nav-links">
+        <button class="nav-link-btn active-exam-btn" onclick="goHome()">
+          <span class="nav-icon">📝</span>
+          <span>Exam Hub</span>
+        </button>
+        <button class="nav-link-btn" onclick="openSettings()">
+          <span class="nav-icon">⚙️</span>
+          <span>Settings</span>
+        </button>
+        <button class="nav-link-btn admin-nav-btn" onclick="openAdminPortal()">
+          <span class="nav-icon">🛡️</span>
+          <span>Admin Portal</span>
+        </button>
+        <button class="nav-link-btn fs-nav-btn" onclick="toggleFullscreen()" title="Toggle Fullscreen">
+          <span class="nav-icon">⛶</span>
+          <span>Fullscreen</span>
+        </button>
+        <button class="nav-link-btn report-issue-nav-btn" onclick="openBugReportModal()" title="Report Bug / Issue" style="color:#fbbf24; border-color:rgba(245,158,11,0.3); background:rgba(245,158,11,0.08);">
+          <span class="nav-icon">🐞</span>
+          <span>Report Issue</span>
+        </button>
+        <button class="nav-link-btn exit-app-btn" onclick="exitApp()" title="Exit Application" style="color:#f87171; border-color:rgba(239,68,68,0.3); background:rgba(239,68,68,0.08);">
+          <span class="nav-icon">🚪</span>
+          <span>Exit</span>
+        </button>
+      </nav>
+
+      <div class="nav-status-badge">
+        <span class="status-pulse-dot"></span>
+        <span class="status-text">AI Connected</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== 1. EXAM HUB / SETUP SCREEN ===== -->
+  <main id="landing" class="screen active">
+    <section class="hero-section">
+      <div class="hero-badge">
+        <span class="badge-sparkle">✨</span>
+        <span>Secure AI-Powered Assessment &amp; In-Built Compiler</span>
+      </div>
+
+      <h1 class="hero-title">
+        Master Any Subject with <br/>
+        <span class="hero-gradient-text">Precision AI Testing</span>
+      </h1>
+
+      <p class="hero-subtitle">
+        Dynamic MCQ &amp; Live Coding assessments (Python &amp; SQL) with in-built compilers, 10–15 automated test cases, and anti-cheat proctoring.
+      </p>
+
+      <!-- Candidate Identity Profile -->
+      <div class="candidate-id-card">
+        <div class="cic-left">
+          <span class="cic-icon">👤</span>
+          <div class="cic-info">
+            <span class="cic-label">Candidate Name / Identification</span>
+            <span class="cic-sub">All test attempts and proctoring telemetry are reported under this identity</span>
+          </div>
+        </div>
+        <div class="cic-input-wrap">
+          <input id="candidateNameInput" type="text"
+            value="Student"
+            placeholder="e.g. Student"
+            autocomplete="name"
+            oninput="sessionStorage.setItem('proctoriq_candidate_name', this.value.trim() || 'Student')" />
+        </div>
+      </div>
+
+      <!-- Student Dashboard Proctor Readiness Bar (Section 22) -->
+      <div id="studentProctorReadinessBar" class="student-proctor-readiness-bar">
+        <div class="sprb-left">
+          <span class="sprb-shield">🛡️</span>
+          <strong class="sprb-title">EXAM PROCTOR</strong>
+          <span class="sprb-divider">|</span>
+          <span class="sprb-item ok" id="sprbCam">Camera ✓</span>
+          <span class="sprb-sep">|</span>
+          <span class="sprb-item ok" id="sprbMic">Microphone ✓</span>
+          <span class="sprb-sep">|</span>
+          <span class="sprb-item ok" id="sprbFace">Face ✓</span>
+        </div>
+        <div class="sprb-right">
+          <span class="sprb-ai-bot-pill" id="sprbAiBotPill">
+            <span class="status-pulse-dot"></span>
+            <span>AI PROCTOR ●</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Home Screen Quick Actions -->
+      <div class="home-quick-actions">
+        <div class="station-status-pill">
+          <span class="status-pulse-dot"></span>
+          <span class="station-label">Secure Assessment Station</span>
+        </div>
+        <button type="button" class="nav-link-btn demo-quick-btn" onclick="startCandidateDemoTest()" title="Launch Permanent 10-Question Demo Proctoring Test" style="color: #38bdf8; border-color: rgba(56, 189, 248, 0.4); background: rgba(56, 189, 248, 0.1);">
+          <span class="nav-icon">🎮</span>
+          <span>Take Demo Test</span>
+        </button>
+        <button type="button" class="nav-link-btn" onclick="openBugReportModal('Home / Landing Screen', '')" title="Report Bug / Issue" style="color:#fbbf24; border-color:rgba(245,158,11,0.3); background:rgba(245,158,11,0.08);">
+          <span class="nav-icon">🐞</span>
+          <span>Report Issue</span>
+        </button>
+        <button class="nav-link-btn exit-app-btn" onclick="exitApp()" title="Exit Application">
+          <span class="nav-icon">🚪</span>
+          <span>Exit Application</span>
+        </button>
+      </div>
+
+      <!-- 1. PERMANENT DEMO PROCTORING TEST CARD (Sections 6, 7, 22 — Always Available) -->
+      <div id="permanentDemoTestCard" class="permanent-demo-card">
+        <div class="pdc-left">
+          <div class="pdc-badge-row">
+            <span class="pdc-tag-main">🎮 DEMO PROCTORING TEST</span>
+            <span class="pdc-tag-unlimited">♾️ Unlimited Attempts</span>
+            <span class="pdc-tag-count" id="demoAttemptsCountBadge">0 Attempts Taken</span>
+          </div>
+          <h2 class="pdc-title">10 Questions (8 MCQ + 1 Coding + 1 SQL)</h2>
+          <p class="pdc-desc">
+            Always available practice examination featuring <strong>8 Introductory MCQs</strong> (Python, Java, C, SQL, DSA, CS), <strong>1 LeetCode Coding Problem (#2235 Add Two Integers)</strong>, and <strong>1 SQL Query Challenge (Student Table)</strong> with live AI proctoring.
+          </p>
+        </div>
+        <div class="pdc-right">
+          <button type="button" id="startDemoTestMainBtn" class="aec-launch-btn pdc-start-btn" onclick="startCandidateDemoTest()">
+            <span>⚡</span>
+            <span>START DEMO</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. ASSIGNED EXAMS SECTION (Section 8 & 22 — Only Admin-Assigned Tests Appear Here) -->
+      <div id="studentAssignedExamsSection" class="student-dashboard-section">
+        <div class="sds-header">
+          <span class="sds-title">📋 ASSIGNED EXAMS</span>
+          <span class="sds-sub">Only examinations assigned and published by the Administrator appear here</span>
+        </div>
+
+        <!-- Administrator Assigned Assessment Centerpiece -->
+        <div id="assignedExamCard" class="assigned-exam-card" style="display:none">
+          <div class="aec-header">
+            <div class="aec-badge-wrap">
+              <span class="aec-badge">⭐ ASSIGNED ASSESSMENT</span>
+              <span id="aecScheduleStatus" class="aec-schedule-status active">🟢 OPEN NOW</span>
+            </div>
+            <h2 id="aecTitle" class="aec-title">Placement Assessment</h2>
+            <p id="aecDesc" class="aec-desc">Configured by Administrator • Full Proctoring Active</p>
+          </div>
+          <div class="aec-meta-row">
+            <div class="aec-meta-item">
+              <span class="ami-label">Format</span>
+              <span class="ami-val" id="aecFormat">CODING</span>
+            </div>
+            <div class="aec-meta-item">
+              <span class="ami-label">Topic</span>
+              <span class="ami-val" id="aecTopic">1. Two Sum</span>
+            </div>
+            <div class="aec-meta-item">
+              <span class="ami-label">Time Limit</span>
+              <span class="ami-val" id="aecTimeLimit">30 Mins</span>
+            </div>
+            <div class="aec-meta-item">
+              <span class="ami-label">Difficulty</span>
+              <span class="ami-val" id="aecDifficulty">Medium</span>
+            </div>
+            <div class="aec-meta-item">
+              <span class="ami-label">Attempts</span>
+              <span class="ami-val" id="aecAttempts">1 Attempt</span>
+            </div>
+          </div>
+          <!-- Proctoring Policy Pill Bar -->
+          <div class="aec-proctor-bar">
+            <span class="apb-title">Security Profile:</span>
+            <div id="aecProctorBadges" class="apb-badges">
+              <span class="tbl-badge format-coding" id="apbCam">📷 Cam: ON</span>
+              <span class="tbl-badge format-coding" id="apbMic">🎙️ Mic: ON</span>
+              <span class="tbl-badge format-coding" id="apbApps">💻 Apps: Blocked</span>
+              <span class="tbl-badge format-sql" id="apbFs">⛶ Fullscreen: ON</span>
+            </div>
+          </div>
+          <div class="aec-actions">
+            <button id="aecStartBtn" class="aec-launch-btn" onclick="startAssignedExam()">
+              <span>⚡</span>
+              <span>Start Assigned Examination</span>
+            </button>
+            <button type="button" class="admin-btn-secondary" onclick="openBugReportModal('Assigned Assessment Card', 'Issue launching assigned test')" style="color: #fbbf24; border-color: rgba(245,158,11,0.35); background: rgba(245,158,11,0.08); font-size: 0.85rem; padding: 0.65rem 1.1rem; display: inline-flex; align-items: center; gap: 0.4rem;">
+              <span>🐞</span>
+              <span>Report Issue</span>
+            </button>
+            <span id="aecScheduleNote" class="aec-schedule-note"></span>
+          </div>
+        </div>
+
+        <!-- Standby State when No Exam is Assigned -->
+        <div id="noAssignedExamCard" class="no-assigned-exam-card">
+          <div class="naec-icon">📋</div>
+          <h3 class="naec-title" id="naecTitleText">No assigned exams.</h3>
+          <p class="naec-desc">
+            There is currently no active examination assigned by your administrator. Once an exam is published and assigned from the Admin Portal, it will appear here automatically.
+          </p>
+          <div class="naec-access-box">
+            <input type="text" id="candidateAccessCodeInput" class="naec-input" placeholder="Or enter Assigned Test ID / Access Code..." />
+            <button type="button" class="naec-btn-launch" onclick="launchByAccessCode()">Load Assigned Exam</button>
+          </div>
+
+          <div class="naec-alt-actions">
+            <button type="button" class="naec-action-link" onclick="checkActiveAssignment(true)">
+              <span>🔄</span>
+              <span>Check for Assigned Exams</span>
+            </button>
+            <button type="button" class="naec-action-link" onclick="openBugReportModal('Assessment Standby', 'Cannot find or load assigned exam')" style="color:#fbbf24;">
+              <span>🐞</span>
+              <span>Report Issue</span>
+            </button>
+            <button type="button" class="naec-action-link" onclick="openAdminPortal()">
+              <span>🛡️</span>
+              <span>Instructor / Admin Portal</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. ATTEMPT HISTORY SECTION (Sections 7, 9, 22 — Demo & Assigned Attempts with [View Report]) -->
+      <div id="studentAttemptHistorySection" class="student-dashboard-section">
+        <div class="sds-header">
+          <span class="sds-title">📊 ATTEMPT HISTORY</span>
+          <span class="sds-sub">View detailed performance &amp; proctoring reports for all Demo and Assigned attempts</span>
+        </div>
+        <div id="studentAttemptHistoryList" class="student-attempt-history-list">
+          <div class="sah-empty">No attempts recorded yet. Start the Demo Proctoring Test above to try the platform!</div>
+        </div>
+      </div>
+
+      <!-- Trust Features Bar -->
+      <div class="trust-features-bar">
+        <div class="trust-item">
+          <span class="trust-icon">🖥️</span>
+          <span>In-Built Python &amp; SQLite Compilers</span>
+        </div>
+        <div class="trust-item">
+          <span class="trust-icon">🧪</span>
+          <span>10–15 Automated Test Cases</span>
+        </div>
+        <div class="trust-item">
+          <span class="trust-icon">🚫</span>
+          <span>1-Strike Tab-Lock Enforcement</span>
+        </div>
+        <div class="trust-item">
+          <span class="trust-icon">🤖</span>
+          <span>Dual AI Grading &amp; Verification</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== 2. QUIZ SCREEN (PROCTORED EXAM) ===== -->
+  <section id="quizScreen" class="screen">
+
+    <!-- Unified Proctor & Exam Navigation HUD Bar -->
+    <div id="proctorHUD" class="proctor-hud-bar" style="display:none">
+      <div class="hud-left-group">
+        <span id="quizTitle" class="hud-exam-title">📝 Exam</span>
+        <div class="security-badge" id="hudStrikeBadge">
+          <span class="strike-icon">🛡️</span>
+          <span id="strikeText">Malpractice: 0 / 10</span>
+        </div>
+        <div class="security-badge" id="hudSoundBadge">
+          <span class="strike-icon">🎙️</span>
+          <span id="soundStrikeText">Voice: 0 / 10</span>
+        </div>
+        <div class="security-badge" id="hudScreenBadge" style="display:none">
+          <span class="strike-icon">🖥️</span>
+          <span id="screenStrikeText">Screen: Live</span>
+        </div>
+      </div>
+
+      <div class="hud-center-group">
+        <button type="button" class="hud-nav-arrow-btn" id="hudPrevBtn" onclick="prevQuestion()" title="Previous Question">‹</button>
+        <span id="quizProgress" class="progress-pill">Question 1 of 1</span>
+        <button type="button" class="hud-nav-arrow-btn" id="hudNextBtn" onclick="nextQuestion()" title="Next Question">›</button>
+        <span id="quizAnsweredCount" class="answered-pill">0 Answered</span>
+      </div>
+
+      <div class="hud-actions">
+        <div class="hud-timer-badge">
+          <span class="timer-dot"></span>
+          <span id="quizTimer">⏱ 15:00</span>
+        </div>
+        <button type="button" class="hud-report-btn" onclick="openBugReportModal('Live Exam HUD', '')" title="Report Issue / Bug (Available 24/7)">
+          <span>🐞</span>
+          <span>Report</span>
+        </button>
+        <button type="button" class="hud-fullscreen-btn" onclick="toggleFullscreen()" title="Toggle Fullscreen">⛶</button>
+        <button type="button" class="hud-submit-btn" id="hudSubmitExamBtn" onclick="confirmSubmit()" title="Submit and Complete Examination">
+          <span>✅</span>
+          <span>Submit Exam</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Floating Timer Milestone Alert Banner (50%, 25%, 10% Left) -->
+    <div id="hudTimerAlertBanner" class="hud-timer-alert-banner" style="display:none;">
+      <div class="htab-content">
+        <span id="htabIcon" class="htab-icon">⏳</span>
+        <div class="htab-text-col">
+          <div id="htabTitle" class="htab-title">50% Time Remaining</div>
+          <div id="htabMsg" class="htab-msg">Half of your examination time has passed. Keep up the pace!</div>
+        </div>
+        <button type="button" class="htab-close" onclick="dismissTimerAlertBanner()" title="Dismiss notification">✕</button>
+      </div>
+    </div>
+
+    <!-- Live Proctor Camera & Audio PiP Card -->
+    <div id="proctorPip" class="proctor-pip-card" style="display:none">
+      <div class="pip-header" id="pipHeader" title="Drag to reposition anywhere">
+        <div class="pip-status-group">
+          <span class="pip-live-dot"></span>
+          <span class="pip-title">PROCTOR SHIELD</span>
+        </div>
+        <div class="pip-header-controls">
+          <span id="pipStatusText" class="pip-status ok">Active</span>
+          <button type="button" class="pip-toggle-btn" onclick="openBugReportModal('Proctor Camera/Mic PiP', 'Webcam or microphone detection issue')" title="Report Camera / Audio Issue" style="color:#fbbf24;">🐞</button>
+          <button type="button" class="pip-toggle-btn" id="pipToggleBtn" onclick="PROCTOR.togglePipMinimize()" title="Minimize / Expand Camera View">―</button>
+        </div>
+      </div>
+      <div class="pip-video-container">
+        <video id="cameraFeed" autoplay muted playsinline class="pip-video-feed"></video>
+        <canvas id="detectionCanvas" style="display:none"></canvas>
+        <div id="pipEyeTracker" class="pip-overlay-badge eye-track" style="display:none"><span class="pet-icon">👁️</span> <span id="pipEyeStatusText">Eyes Focused</span></div>
+        <div id="pipLightingBadge" class="pip-overlay-badge warn" style="display:none">💡 Low Light</div>
+        <div id="pipCountdownBadge" class="pip-overlay-badge danger" style="display:none">⚠️ Look at Screen: <span id="pipCountdownSec">25</span>s</div>
+      </div>
+      <!-- Audio Monitor Meter -->
+      <div class="pip-audio-monitor">
+        <span class="pip-mic-icon">🎙️</span>
+        <div class="pip-audio-track">
+          <div id="pipAudioLevel" class="pip-audio-fill" style="width: 5%;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Floating Real-Time Proctor Alert Banners -->
+    <div id="proctorToasts" class="proctor-toasts-area">
+      <div id="glanceAwayToast" class="proctor-toast danger" style="display:none">
+        <span class="toast-icon">⚠️</span>
+        <div class="toast-text">
+          <strong>LOOK BACK AT SCREEN!</strong>
+          <span>Face absence / glance away detected. Disqualification in <strong id="glanceToastSec">25</strong>s!</span>
+        </div>
+      </div>
+      <div id="soundWarningToast" class="proctor-toast warn" style="display:none">
+        <span class="toast-icon">🎙️</span>
+        <div class="toast-text">
+          <strong>SOUND / TALKING DETECTED!</strong>
+          <span id="soundToastDesc">Warning 1 of 10. Complete silence is strictly required during this exam.</span>
+        </div>
+      </div>
+      <div id="lightingWarningToast" class="proctor-toast info" style="display:none">
+        <span class="toast-icon">💡</span>
+        <div class="toast-text">
+          <strong>INSUFFICIENT LIGHTING</strong>
+          <span>Please ensure your face is clearly illuminated by a light source.</span>
+        </div>
+      </div>
+      <div id="hotkeyWarningToast" class="proctor-toast danger" style="display:none">
+        <span class="toast-icon">🚫</span>
+        <div class="toast-text">
+          <strong id="hotkeyToastTitle">PROHIBITED SHORTCUT ATTEMPTED!</strong>
+          <span id="hotkeyToastDesc">Hotkeys like Ctrl+C, Ctrl+V, and Alt+Tab are strictly locked during the exam.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Animated Smooth Progress Bar -->
+    <div class="progress-track">
+      <div id="progressBar" class="progress-fill" style="width: 10%;"></div>
+    </div>
+
+    <!-- Question Palette Bar (1..N) -->
+    <div class="palette-container">
+      <div class="palette-label">Question Palette:</div>
+      <div id="questionPalette" class="palette-grid"></div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="question-container">
+
+      <!-- 1. MCQ Question Card -->
+      <div class="question-card" id="questionCard">
+        <div class="question-header">
+          <span class="question-number-tag" id="qNumberTag">Q1</span>
+          <div id="questionText" class="question-text">Loading question text...</div>
+        </div>
+
+        <!-- Multi-choice hint badge -->
+        <div id="multiChoiceHint" class="multi-choice-hint" style="display:none">
+          <span>✔ Select all that apply</span>
+        </div>
+
+        <div id="choicesContainer" class="choices-container"></div>
+      </div>
+
+      <!-- 2. ProctorIQ Coding Workspace (Python & SQL) - LeetCode Architecture -->
+      <div id="codingWorkspace" class="coding-workspace-grid" style="display:none">
+        
+        <!-- Left Panel: Problem Statement & Schema (Exact match to Left Column of Image 1) -->
+        <div class="cw-left-panel">
+          <div class="cw-tabs-bar">
+            <button type="button" class="cw-tab-btn active" id="cwTabBtnProblem" onclick="QUIZ.switchCwTab('problem')">
+              <span class="cw-tab-icon">📄</span> Description
+            </button>
+            <button type="button" class="cw-tab-btn" id="cwSchemaTabBtn" onclick="QUIZ.switchCwTab('schema')" style="display:none">
+              <span class="cw-tab-icon">🗄️</span> Database Schema
+            </button>
+            <button type="button" class="cw-tab-btn" id="cwSubmissionsTabBtn" onclick="QUIZ.switchCwTab('submissions')">
+              <span class="cw-tab-icon">🕒</span> Submissions
+            </button>
+          </div>
+
+          <!-- Problem Description -->
+          <div id="cwProblemTab" class="cw-tab-body active">
+            <div class="cw-problem-header-row">
+              <div class="cw-title-wrap">
+                <h2 id="cwProblemTitle" class="cw-problem-title">Problem Title</h2>
+                <span id="cwProblemSolvedBadge" class="cw-solved-badge" style="display:none;">Solved <span class="cw-solved-check">✔</span></span>
+              </div>
+            </div>
+            <div class="cw-problem-tags-row">
+              <span id="cwProblemDifficulty" class="cw-diff-pill medium">Medium</span>
+              <span class="cw-tag-chip" id="cwTopicChip">Topics <span class="cw-chip-caret">▾</span></span>
+            </div>
+            <div id="cwProblemBody" class="cw-markdown-content"></div>
+          </div>
+
+          <!-- SQL Schema (For Database Questions) -->
+          <div id="cwSchemaTab" class="cw-tab-body" style="display:none">
+            <div class="cw-schema-desc">MySQL 8.0 database pre-loaded with this schema:</div>
+            <pre><code class="language-sql" id="cwSchemaCode"></code></pre>
+          </div>
+
+          <!-- Submissions Tab (Exact match to Image 2) -->
+          <div id="cwSubmissionsTab" class="cw-tab-body" style="display:none">
+            <div class="cw-submissions-container">
+              <div class="cw-subm-table-header">
+                <div class="cw-subm-th col-status">Status <span class="cw-subm-caret">▾</span></div>
+                <div class="cw-subm-th col-lang">Language <span class="cw-subm-caret">▾</span></div>
+                <div class="cw-subm-th col-runtime">Runtime</div>
+                <div class="cw-subm-th col-memory">Memory</div>
+              </div>
+              <div id="cwSubmissionsList" class="cw-subm-list">
+                <div class="cw-subm-empty">No submissions yet. Click <strong>⚡ Submit</strong> to evaluate and record your solution.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Panel: Code Editor + LeetCode Bottom Drawer (Testcase & Test Result) -->
+        <div class="cw-right-panel">
+          
+          <!-- Top Section: Code Editor Pane -->
+          <div class="cw-editor-pane">
+            <div class="cw-editor-topbar">
+              <div class="cw-editor-topbar-left">
+                <span class="cw-lc-code-badge"><code>&lt;/&gt;</code> Code</span>
+                <div class="cw-lang-dropdown-wrapper">
+                  <select id="cwLangSelect" class="cw-lang-select" onchange="QUIZ.switchLanguage(this.value)">
+                    <option value="python">Python 3.14</option>
+                    <option value="mysql">MySQL 8.0</option>
+                    <option value="java">Java 11</option>
+                    <option value="cpp">C++14</option>
+                    <option value="c">C</option>
+                  </select>
+                </div>
+                <span class="cw-auto-badge">🔒 Auto</span>
+              </div>
+              <div class="cw-editor-topbar-right">
+                <button type="button" class="cw-icon-tool-btn" onclick="openBugReportModal('Code Editor', 'Compiler / Execution issue')" title="Report Issue / Compiler Bug" style="color:#fbbf24;">🐞</button>
+                <button type="button" class="cw-icon-tool-btn" title="Bookmark">🔖</button>
+                <button type="button" class="cw-icon-tool-btn" onclick="QUIZ.formatEditorCode()" title="Format Code / Indent">{ }</button>
+                <button type="button" class="cw-icon-tool-btn" onclick="QUIZ.resetStarterCode()" title="Reset Starter Code">↺</button>
+                <button type="button" class="cw-icon-tool-btn" onclick="QUIZ.toggleEditorFullscreen()" title="Toggle Fullscreen Code Area">⛶</button>
+              </div>
+            </div>
+
+            <div class="cw-editor-wrapper">
+              <div id="cwLineNumbers" class="cw-line-numbers">1</div>
+              <div class="cw-editor-viewport">
+                <pre id="cwHighlightPre" class="cw-highlight-pre" aria-hidden="true"><code id="cwHighlightCode" class="hljs"></code></pre>
+                <textarea id="cwCodeInput" class="cw-editor-textarea" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="Write your code solution here..."></textarea>
+              </div>
+            </div>
+
+            <!-- Editor Footer Status Bar (Image 1 match) -->
+            <div class="cw-editor-footer">
+              <div class="cw-editor-footer-left">
+                <span id="cwSavedBadge" class="cw-saved-indicator">Saved</span>
+              </div>
+              <div class="cw-editor-footer-right">
+                <span id="cwCursorPos" class="cw-cursor-pos">Ln 1, Col 1</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Resizable Splitter Between Editor and Console -->
+          <div class="cw-drawer-resizer" id="cwDrawerResizer" title="Drag to resize Editor and Console"></div>
+
+          <!-- Bottom Section: LeetCode Testcase & Test Result Drawer (Exact match to Image 1, 2, 3) -->
+          <div class="cw-lc-drawer" id="cwLcDrawer">
+
+            <!-- Drawer Header: Tabs, Compiler Status/Time & Execution Actions -->
+            <div class="cw-lc-drawer-header">
+              <div class="cw-lc-tabs">
+                <button type="button" class="cw-lc-tab-btn" id="cwLcTabBtnTestcase" onclick="QUIZ.switchLcDrawerTab('testcase')">
+                  <span class="cw-lc-tab-icon">☑</span> Testcase
+                </button>
+                <button type="button" class="cw-lc-tab-btn active" id="cwLcTabBtnResult" onclick="QUIZ.switchLcDrawerTab('result')">
+                  <span class="cw-lc-tab-icon">&gt;_</span> Test Result
+                </button>
+                <span id="cwCompilerStatusBadge" class="cw-compiler-status-badge">Status: Ready</span>
+                <span id="cwCompilerExecTime" class="cw-compiler-exec-time">Execution Time: —</span>
+              </div>
+
+              <div class="cw-lc-actions">
+                <button type="button" class="cw-lc-btn run-btn" onclick="QUIZ.runSampleCases()" title="Run code against sample test cases (Ctrl+Enter)">
+                  <span>▶</span> Run Code
+                </button>
+                <button type="button" class="cw-lc-btn submit-btn" onclick="QUIZ.runAllTestcases()" title="Evaluate code against all test cases">
+                  <span>⚡</span> Submit
+                </button>
+              </div>
+            </div>
+
+            <!-- Drawer Viewport -->
+            <div class="cw-lc-drawer-content">
+
+              <!-- View 1: Testcase Tab (Case 1, Case 2, etc. + Custom Stdin) -->
+              <div id="cwLcTabTestcaseView" class="cw-lc-tab-content active">
+                <div class="cw-lc-pills-row" id="cwLcSampleCasePills"></div>
+
+                <div class="cw-lc-cases-body">
+                  <div id="cwLcSetupGroup" style="display:none;" class="cw-lc-io-group">
+                    <div class="cw-lc-section-label">Database Table Setup</div>
+                    <div class="cw-lc-param-card" id="cwLcSetupCode"></div>
+                  </div>
+                  <div class="cw-lc-io-group">
+                    <div class="cw-lc-section-label">Input</div>
+                    <div class="cw-lc-param-cards-list" id="cwLcInputCardsList"></div>
+                  </div>
+                  <div class="cw-lc-io-group" id="cwCustomStdinGroup" style="margin-top:0.5rem;">
+                    <div class="cw-lc-section-label">Custom Input (stdin — optional override for Current Case)</div>
+                    <textarea id="cwCustomStdinInput" class="cw-custom-stdin-box" rows="2" spellcheck="false" placeholder="Enter custom stdin input or leave default testcase input..."></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <!-- View 2: Test Result Tab (Empty / Error / Success) -->
+              <div id="cwLcTabResultView" class="cw-lc-tab-content" style="display:none">
+
+                <!-- 2A. Empty State: "You must run your code first" (Exact Image 1) -->
+                <div id="cwLcResultEmpty" class="cw-lc-empty-state">
+                  <span class="cw-lc-empty-text">You must run your code first</span>
+                </div>
+
+                <!-- 2B. Loading State: "Evaluating..." -->
+                <div id="cwLcResultLoading" class="cw-lc-loading-state" style="display:none">
+                  <div class="spinner-ring" style="width:24px; height:24px;"></div>
+                  <span class="cw-lc-loading-text">Running testcases on execution engine...</span>
+                </div>
+
+                <!-- 2C. Runtime Error State (Exact Image 2) -->
+                <div id="cwLcResultError" class="cw-lc-error-state" style="display:none">
+                  <div class="cw-lc-verdict-heading error" id="cwLcErrorHeading">Runtime Error</div>
+                  <div class="cw-lc-error-callout" id="cwLcErrorCallout"></div>
+                  
+                  <div class="cw-lc-error-input-section">
+                    <div class="cw-lc-section-header">Last Executed Input</div>
+                    <div class="cw-lc-param-cards-list" id="cwLcErrorInputCards"></div>
+                  </div>
+                </div>
+
+                <!-- 2D. Evaluated Test Results State (Exact Image 3) -->
+                <div id="cwLcResultSuccess" class="cw-lc-success-state" style="display:none">
+                  <div class="cw-lc-verdict-row">
+                    <span class="cw-lc-verdict-heading accepted" id="cwLcVerdictHeading">Accepted</span>
+                    <span class="cw-lc-verdict-runtime" id="cwLcVerdictRuntime">Runtime: 0 ms</span>
+                  </div>
+
+                  <div class="cw-lc-pills-row" id="cwLcResultCasePills"></div>
+
+                  <div class="cw-lc-result-details">
+                    <!-- Input -->
+                    <div class="cw-lc-io-group">
+                      <div class="cw-lc-section-label">Input</div>
+                      <div class="cw-lc-param-cards-list" id="cwLcResultInputCards"></div>
+                    </div>
+
+                    <!-- Output -->
+                    <div class="cw-lc-io-group">
+                      <div class="cw-lc-section-label">Output</div>
+                      <div class="cw-lc-param-card" id="cwLcResultOutputCard"></div>
+                    </div>
+
+                    <!-- Expected -->
+                    <div class="cw-lc-io-group">
+                      <div class="cw-lc-section-label">Expected</div>
+                      <div class="cw-lc-param-card" id="cwLcResultExpectedCard"></div>
+                    </div>
+
+                    <!-- Optional Stdout -->
+                    <div class="cw-lc-io-group" id="cwLcStdoutGroup" style="display:none">
+                      <div class="cw-lc-section-label">Stdout</div>
+                      <div class="cw-lc-param-card stdout" id="cwLcStdoutCard"></div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Navigation & Submit Bar -->
+      <div class="question-actions-bar">
+        <button id="prevBtn" class="nav-btn prev-btn" onclick="prevQuestion()">
+          <span>←</span>
+          <span>Previous</span>
+        </button>
+        <button type="button" class="nav-report-btn" onclick="openBugReportModal()" title="Report Issue / Bug">
+          <span>🐞</span>
+          <span>Report Issue</span>
+        </button>
+        <div class="spacer"></div>
+        <button id="nextBtn" class="nav-btn next-btn" onclick="nextQuestion()">
+          <span>Next</span>
+          <span>→</span>
+        </button>
+        <button id="submitBtn" class="nav-btn submit-btn" onclick="confirmSubmit()" style="display:none">
+          <span>✅</span>
+          <span>Submit Exam</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Loading Animation Overlay with Live Percentage Progress -->
+    <div id="quizLoading" class="overlay-loading hidden">
+      <div class="loading-box">
+        <div class="loading-gauge-wrap">
+          <svg class="loading-gauge-svg" viewBox="0 0 100 100">
+            <circle class="loading-gauge-bg" cx="50" cy="50" r="42"></circle>
+            <circle class="loading-gauge-bar" id="loadingGaugeCircle" cx="50" cy="50" r="42"></circle>
+          </svg>
+          <div class="loading-gauge-center">
+            <span id="loadingPercentNumber" class="loading-percent-val">0</span>
+            <span class="loading-percent-unit">%</span>
+          </div>
+        </div>
+
+        <div class="loading-text-group">
+          <h3 class="loading-title" id="loadingTitleText">Generating Your Assessment with Taufa AI...</h3>
+          <p class="loading-subtitle" id="loadingSubText">Formulating questions, code challenges, and 10–15 testcases</p>
+        </div>
+
+        <!-- Linear Progress Track -->
+        <div class="loading-bar-track">
+          <div id="loadingProgressBar" class="loading-bar-fill" style="width: 0%;"></div>
+        </div>
+
+        <!-- Dynamic Milestone Step Label -->
+        <div class="loading-step-status" id="loadingStepStatus">
+          <span class="loading-step-dot"></span>
+          <span id="loadingStepText">Initializing assessment environment...</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 3. RESULTS SCREEN ===== -->
+  <section id="resultScreen" class="screen">
+    <div class="results-container">
+      <div class="results-card">
+
+        <!-- Performance Dial Header -->
+        <div class="result-header">
+          <div class="score-circle-wrapper">
+            <svg class="score-svg" viewBox="0 0 120 120">
+              <circle class="score-bg-circle" cx="60" cy="60" r="50"></circle>
+              <circle id="scoreProgressCircle" class="score-stroke-circle" cx="60" cy="60" r="50"></circle>
+            </svg>
+            <div class="score-center-text">
+              <span id="scorePercent">0%</span>
+              <span class="score-subtext">SCORE</span>
+            </div>
+          </div>
+
+          <h2 id="resultTitle" class="result-headline">Exam Complete!</h2>
+          <p id="resultScoreText" class="result-score-line">You scored 0 out of 0 questions</p>
+        </div>
+
+        <!-- OmniRoute Verification Status -->
+        <div id="verificationStatus" class="verification-banner" style="display:none">
+          <span class="verify-icon">🤖</span>
+          <span id="verificationText">Verifying answers with OmniRoute AI...</span>
+        </div>
+
+        <!-- Metric Cards Grid -->
+        <div class="metric-cards-grid">
+          <div class="metric-card">
+            <div class="metric-icon">🎯</div>
+            <div class="metric-value" id="metricScore">0 / 0</div>
+            <div class="metric-label">Questions Passed</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon">⏱️</div>
+            <div class="metric-value" id="metricTime">00:00</div>
+            <div class="metric-label">Time Taken</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon">⚡</div>
+            <div class="metric-value" id="metricAccuracy">0%</div>
+            <div class="metric-label">Overall Accuracy</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon">🛡️</div>
+            <div class="metric-value" id="metricProctor">Clean</div>
+            <div class="metric-label">Proctor Record</div>
+          </div>
+        </div>
+
+        <!-- Filter Pills for Review -->
+        <div class="review-filters">
+          <span class="review-title">Detailed Review:</span>
+          <div class="filter-pills">
+            <button class="filter-btn active" onclick="filterReview('all', this)">All Items</button>
+            <button class="filter-btn" onclick="filterReview('correct', this)">✅ Correct Only</button>
+            <button class="filter-btn" onclick="filterReview('wrong', this)">❌ Incorrect Only</button>
+          </div>
+        </div>
+
+        <!-- Review Question List -->
+        <div id="resultDetails" class="result-details-list"></div>
+
+        <!-- Actions Footer -->
+        <div class="result-footer-actions">
+          <button class="cta-start-btn" onclick="goHome()">📝 Back to Dashboard</button>
+          <button type="button" id="btnViewResultReport" class="admin-primary-btn" onclick="openExamAttemptReport()" style="display:inline-flex; align-items:center; gap:0.45rem; padding:0.8rem 1.4rem;">
+            <span>📊</span>
+            <span>View Comprehensive Report</span>
+          </button>
+          <button type="button" class="admin-btn-secondary" onclick="openBugReportModal()" style="display:inline-flex; align-items:center; gap:0.4rem; padding:0.8rem 1.4rem;">
+            <span>🐞</span>
+            <span>Report Issue</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 4. SETTINGS SCREEN ===== -->
+  <section id="settingsScreen" class="screen">
+    <div class="screen-header">
+      <button class="glass-btn back-btn" onclick="goHome()">← Home</button>
+      <div class="screen-title-group">
+        <h1 class="screen-heading">Settings</h1>
+        <p class="screen-subheading">Configure AI models, in-built compilers, and verification options</p>
+      </div>
+      <button type="button" class="admin-btn-secondary" onclick="openBugReportModal('Settings Screen', '')" style="margin-left: auto; color: #fbbf24; border-color: rgba(245,158,11,0.3); background: rgba(245,158,11,0.08); padding: 0.6rem 1.1rem; display: inline-flex; align-items: center; gap: 0.4rem;">
+        <span>🐞</span>
+        <span>Report Issue</span>
+      </button>
+    </div>
+
+    <div class="setup-container">
+      <div class="setup-card">
+
+        <!-- OmniRoute AI Section -->
+        <div class="settings-section">
+          <div class="settings-section-header">
+            <span class="settings-icon">🤖</span>
+            <div>
+              <div class="settings-section-title">OmniRoute Local AI Model</div>
+              <div class="settings-section-subtitle">Auto-launched in background (port 20128) to cross-verify answers</div>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top: 1.2rem;">
+            <label class="form-label" for="omniRouteKeyInput">
+              <span class="label-icon">🔑</span>
+              <span>OmniRoute API Key (Optional)</span>
+            </label>
+            <div class="api-key-input-wrapper">
+              <input id="omniRouteKeyInput" type="password"
+                placeholder="Optional: Enter key if your OmniRoute server requires auth..."
+                autocomplete="off"
+                onpaste="onOmniRouteCandidatePaste(event, this)"
+                oninput="onOmniRouteCandidateInput(this.value)" />
+              <button class="toggle-visibility-btn" onclick="toggleKeyVisibility('omniRouteKeyInput', this)" title="Show/Hide key">
+                👁
+              </button>
+            </div>
+            <div id="omniCandidateStatusMsg" style="display:none; font-size:0.82rem; font-weight:600; margin-top:0.45rem;"></div>
+            <p class="form-hint">OmniRoute starts automatically when ProctorIQ opens. If your local server requires an API key, paste it here to immediately test live connection.</p>
+          </div>
+        </div>
+
+        <div class="settings-divider"></div>
+
+        <!-- In-Built Compilers Section -->
+        <div class="settings-section">
+          <div class="settings-section-header">
+            <span class="settings-icon">⚡</span>
+            <div>
+              <div class="settings-section-title">In-Built Compilers &amp; Runners</div>
+              <div class="settings-section-subtitle">Zero configuration native execution engines</div>
+            </div>
+          </div>
+          <div class="settings-info-box">
+            <p>• <strong>Python 3.14 Engine</strong>: Subprocess sandboxed execution with timeout protection and testcase validation.</p>
+            <p>• <strong>SQLite Database Engine</strong>: In-memory database with automated schema creation and query output comparison.</p>
+            <p>• <strong>Taufa Testcase Generator</strong>: 10 to 15 test cases generated per challenge, mixing public sample cases and hidden edge cases.</p>
+          </div>
+        </div>
+
+        <!-- Save Button -->
+        <button class="cta-start-btn" onclick="saveSettings()">
+          <span>💾</span>
+          <span>Save Settings</span>
+        </button>
+
+        <div id="settingsSaveMsg" class="settings-save-msg" style="display:none"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 4. ADMIN DASHBOARD SCREEN ===== -->
+  <section id="adminDashboardScreen" class="screen">
+    <!-- Admin Topbar -->
+    <div class="admin-header-bar">
+      <div class="admin-title-group">
+        <div class="admin-badge-shield">🛡️ Executive Command</div>
+        <h1>
+          <span>ShieldAdmin • Central Assessment Portal</span>
+        </h1>
+        <p>Live candidate attendance telemetry, overall scoring metrics, test authoring studio, and proctoring policy enforcement</p>
+      </div>
+      <div class="admin-actions-group">
+        <button class="admin-btn-secondary" onclick="loadAdminDashboard()" title="Reload telemetry and metrics">
+          <span>🔄</span>
+          <span>Refresh Data</span>
+        </button>
+        <button class="admin-btn-secondary" onclick="openBugReportModal()" title="Report Issue / Bug" style="color:#fbbf24; border-color:rgba(245,158,11,0.3); background:rgba(245,158,11,0.08);">
+          <span>🐞</span>
+          <span>Report Issue</span>
+        </button>
+        <button class="admin-btn-secondary" onclick="viewAllBugReportsModal()" title="View all recorded bug reports in bug_reports.txt">
+          <span>📄</span>
+          <span>View Bug Reports</span>
+        </button>
+        <button class="admin-btn-secondary" onclick="goHome()" title="Switch to Candidate Assessment Hub">
+          <span>🎓</span>
+          <span>Candidate Mode</span>
+        </button>
+        <button class="admin-btn-danger" onclick="logoutAdmin()" title="Logout from Admin Portal">
+          <span>🚪</span>
+          <span>Logout</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Executive KPI Metrics Row -->
+    <div class="admin-metrics-grid">
+      <!-- KPI 1: Tests Attended -->
+      <div class="admin-kpi-card">
+        <div class="kpi-top-row">
+          <span class="kpi-label">Tests Attended</span>
+          <div class="kpi-icon-bubble cyan">📋</div>
+        </div>
+        <div class="kpi-value" id="admMetricTotalAttended">--</div>
+        <div class="kpi-sub">
+          <span><strong id="admMetricCompleted">--</strong> Completed • <strong id="admMetricDisqualified">--</strong> Disqualified</span>
+        </div>
+      </div>
+
+      <!-- KPI 2: Overall % -->
+      <div class="admin-kpi-card">
+        <div class="kpi-top-row">
+          <span class="kpi-label">Overall Percentage</span>
+          <div class="kpi-icon-bubble">📊</div>
+        </div>
+        <div class="kpi-value" id="admMetricOverallPct">--%</div>
+        <div class="kpi-sub">Average score across completed tests</div>
+      </div>
+
+      <!-- KPI 3: Pass Rate (>=70%) -->
+      <div class="admin-kpi-card">
+        <div class="kpi-top-row">
+          <span class="kpi-label">Passing Rate</span>
+          <div class="kpi-icon-bubble green">🎯</div>
+        </div>
+        <div class="kpi-value" id="admMetricPassRate">--%</div>
+        <div class="kpi-sub">
+          <span><strong id="admMetricPassedCount">--</strong> Passed (≥70%) • <strong id="admMetricFailedCount">--</strong> Under</span>
+        </div>
+      </div>
+
+      <!-- KPI 4: Security Integrity Index -->
+      <div class="admin-kpi-card">
+        <div class="kpi-top-row">
+          <span class="kpi-label">Integrity Index</span>
+          <div class="kpi-icon-bubble amber">🛡️</div>
+        </div>
+        <div class="kpi-value" id="admMetricIntegrityRate">--%</div>
+        <div class="kpi-sub">Clean tests without proctoring strikes</div>
+      </div>
+    </div>
+
+    <!-- Admin Navigation Sub-Tabs -->
+    <div class="admin-subtabs">
+      <button type="button" class="admin-subtab-btn active" onclick="switchAdminTab('records', this)">
+        <span>📋</span>
+        <span>Attended Tests (<span id="admTabBadgeRecords">0</span>)</span>
+      </button>
+      <button type="button" class="admin-subtab-btn" onclick="switchAdminTab('create', this)">
+        <span>➕</span>
+        <span>Create &amp; Schedule Test</span>
+      </button>
+      <button type="button" class="admin-subtab-btn" onclick="switchAdminTab('leetcode', this)">
+        <span>💻</span>
+        <span>LeetCode Integration</span>
+      </button>
+      <button type="button" class="admin-subtab-btn" onclick="switchAdminTab('ai-control', this)">
+        <span>🤖</span>
+        <span>Taufa.ai &amp; OmniRoute Control</span>
+      </button>
+      <button type="button" class="admin-subtab-btn" onclick="switchAdminTab('proctor', this)">
+        <span>⚙️</span>
+        <span>Proctoring Policies</span>
+      </button>
+      <button type="button" class="admin-subtab-btn" onclick="switchAdminTab('catalog', this)">
+        <span>📚</span>
+        <span>Catalog &amp; Schedules (<span id="admTabBadgeCatalog">0</span>)</span>
+      </button>
+    </div>
+
+    <!-- SUB-TAB 1: Attended Tests Log -->
+    <div id="adminTabRecords" class="admin-tab-pane active">
+      <!-- Filter Bar -->
+      <div class="admin-filter-bar">
+        <div class="admin-search-box">
+          <span class="admin-search-icon">🔍</span>
+          <input type="text" id="admSearchInput" placeholder="Search candidate name, topic..." oninput="filterAdminRecords()" />
+        </div>
+        <select id="admFilterFormat" class="admin-select-filter" onchange="filterAdminRecords()">
+          <option value="all">All Formats</option>
+          <option value="coding">LeetCode Coding</option>
+          <option value="sql">SQL Challenge</option>
+          <option value="mcq">Multiple Choice</option>
+          <option value="coding+mcq">Coding + MCQ</option>
+          <option value="coding+sql">Coding + SQL</option>
+          <option value="sql+mcq">SQL + MCQ</option>
+          <option value="coding+sql+mcq">Coding + SQL + MCQ</option>
+          <option value="hybrid">Legacy Hybrid</option>
+        </select>
+        <select id="admFilterStatus" class="admin-select-filter" onchange="filterAdminRecords()">
+          <option value="all">All Statuses</option>
+          <option value="completed">Completed Only</option>
+          <option value="disqualified">Disqualified Only</option>
+        </select>
+        <select id="admFilterSort" class="admin-select-filter" onchange="filterAdminRecords()">
+          <option value="newest">Newest First</option>
+          <option value="score_desc">Highest Score</option>
+          <option value="score_asc">Lowest Score</option>
+        </select>
+        <div style="display:flex; gap:0.5rem; margin-left:auto;">
+          <button type="button" class="admin-btn-danger" onclick="resetMainQuizData()" title="Reset Main Exam Portal / Unassign all tests">
+            <span>🧹</span>
+            <span>Reset Main Quiz</span>
+          </button>
+          <button type="button" class="admin-btn-secondary" onclick="refreshAdminRecords()" title="Refresh Attendance Logs">
+            <span>🔄</span>
+            <span>Refresh</span>
+          </button>
+          <button type="button" class="admin-btn-secondary" onclick="clearAdminRecords()" style="color:#f87171; border-color:rgba(239,68,68,0.3);" title="Clear All Records">
+            <span>🗑️</span>
+            <span>Clear Records</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Data Table -->
+      <div class="admin-table-container">
+        <table class="admin-data-table">
+          <thead>
+            <tr>
+              <th>Candidate &amp; Timestamp</th>
+              <th>Assessment Topic / Problem</th>
+              <th>Format</th>
+              <th>Score</th>
+              <th>Proctoring Strikes</th>
+              <th>Status</th>
+              <th>Audit Actions</th>
+            </tr>
+          </thead>
+          <tbody id="admRecordsTableBody">
+            <!-- Dynamically populated by app.js -->
+          </tbody>
+        </table>
+        <div id="admRecordsEmptyMsg" style="display:none; padding: 3rem 1.5rem; text-align: center;">
+          <div style="font-size: 2.2rem; margin-bottom: 0.6rem;">📋</div>
+          <div style="font-weight: 700; color: #fff; font-size: 1.05rem; margin-bottom: 0.4rem;">No Candidate Tests Attended Yet</div>
+          <div style="color: var(--text-muted); font-size: 0.88rem; max-width: 520px; margin: 0 auto; line-height: 1.5;">
+            Real-time candidate telemetry will appear here as students attend and complete assessments or trigger proctoring violations from the main app.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUB-TAB 2: Create & Schedule Test -->
+    <div id="adminTabCreate" class="admin-tab-pane">
+      <div class="admin-card-container">
+        <div class="psc-header" style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <h2 style="font-size: 1.25rem; font-weight: 800; color: #fff;">Test Authoring, Scheduling &amp; Assignment Studio</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">
+              Design custom assessments, set candidate schedule windows, and assign directly to the Main App.
+            </p>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.65rem;">
+            <span id="admDraftStatusBadge" class="tbl-badge format-hybrid" style="display:none; font-size:0.75rem; padding:0.35rem 0.75rem;">💾 Draft Auto-Saved</span>
+            <button type="button" class="admin-btn-secondary" onclick="clearAdminTestDraft()" style="font-size:0.78rem; padding:0.4rem 0.85rem;" title="Clear remembered form details and start with a clean form">
+              <span>🧹</span>
+              <span>Reset / Clear Draft</span>
+            </button>
+          </div>
+        </div>
+
+        <form id="adminCreateTestForm" onsubmit="event.preventDefault();">
+          <div class="admin-form-grid">
+
+            <!-- Visual Assessment Format Selector Cards -->
+            <!-- Visual Assessment Format Selector Cards (Multi-Select) -->
+            <div class="admin-form-full">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.45rem;">
+                <label class="admin-input-label" style="margin-bottom:0;">
+                  <span>Assessment Format Modules</span>
+                  <span class="req">* (Multi-Select)</span>
+                </label>
+                <span style="font-size: 0.76rem; color: #94a3b8; font-weight: 500;">Click modules to toggle and mix multiple assessment types</span>
+              </div>
+
+              <div class="format-selector-grid">
+                <!-- Module 1: LeetCode Live Coding -->
+                <div class="format-card format-toggle-card active" data-module="coding" onclick="toggleAdminFormatModule('coding', this)">
+                  <div class="format-check-box">
+                    <span class="check-icon">✓</span>
+                  </div>
+                  <span class="format-card-icon">💻</span>
+                  <div class="format-card-text">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                      <span class="format-card-title">LeetCode Live Coding</span>
+                      <span class="module-status-pill">Included</span>
+                    </div>
+                    <span class="format-card-sub">Python, Java, C++, C compilers &amp; 10–15 automated test cases</span>
+                  </div>
+                </div>
+
+                <!-- Module 2: SQL Query Challenge -->
+                <div class="format-card format-toggle-card" data-module="sql" onclick="toggleAdminFormatModule('sql', this)">
+                  <div class="format-check-box">
+                    <span class="check-icon">✓</span>
+                  </div>
+                  <span class="format-card-icon">🗄️</span>
+                  <div class="format-card-text">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                      <span class="format-card-title">SQL Query Challenge</span>
+                      <span class="module-status-pill">Add Module</span>
+                    </div>
+                    <span class="format-card-sub">MySQL 8.0 live engine &amp; 10–15 schema test cases</span>
+                  </div>
+                </div>
+
+                <!-- Module 3: Multiple Choice (MCQ) -->
+                <div class="format-card format-toggle-card" data-module="mcq" onclick="toggleAdminFormatModule('mcq', this)">
+                  <div class="format-check-box">
+                    <span class="check-icon">✓</span>
+                  </div>
+                  <span class="format-card-icon">📝</span>
+                  <div class="format-card-text">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                      <span class="format-card-title">Multiple Choice (MCQ)</span>
+                      <span class="module-status-pill">Add Module</span>
+                    </div>
+                    <span class="format-card-sub">Checkboxes, multi/single answers &amp; dual AI grading</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Active Combination Status Banner with Quick Presets -->
+              <div id="admMultiFormatBanner" class="multi-format-banner">
+                <div class="mfb-left">
+                  <span class="mfb-icon">⚡</span>
+                  <div class="mfb-info">
+                    <span class="mfb-title">Active Combination</span>
+                    <span id="admFormatSummaryText" class="mfb-summary">💻 LeetCode Live Coding (1 Module)</span>
+                  </div>
+                </div>
+                <div class="mfb-quick-combos">
+                  <span style="font-size:0.74rem; color:#94a3b8; font-weight:600;">Quick Presets:</span>
+                  <button type="button" class="mfb-quick-btn" onclick="setAdminFormatModules(['coding', 'sql', 'mcq'])">🏆 All 3 (Tri-Assessment)</button>
+                  <button type="button" class="mfb-quick-btn" onclick="setAdminFormatModules(['coding', 'sql'])">🚀 Coding + SQL</button>
+                  <button type="button" class="mfb-quick-btn" onclick="setAdminFormatModules(['coding', 'mcq'])">⚡ Coding + MCQ</button>
+                  <button type="button" class="mfb-quick-btn" onclick="setAdminFormatModules(['sql', 'mcq'])">📊 SQL + MCQ</button>
+                </div>
+              </div>
+
+              <input id="admNewTestFormat" type="hidden" value="coding" />
+            </div>
+
+
+            <!-- Test Title -->
+            <div class="admin-form-full">
+              <label class="admin-input-label">Test Title <span class="req">*</span></label>
+              <input type="text" id="admNewTestTitle" class="admin-input-field" placeholder="e.g. Placement Coding Exam: Arrays &amp; Two Pointers" required />
+            </div>
+
+            <!-- Topic / Challenge Target -->
+            <div class="admin-form-full">
+              <label class="admin-input-label">Topic / Challenge Target <span class="req">*</span></label>
+              <input type="text" id="admNewTestTopic" class="admin-input-field" placeholder="e.g. Arrays &amp; Two Pointers, SQL Joins, Full Stack Core" required />
+            </div>
+
+            <!-- Subject Category (Multi-Select with All 16 LeetCode Topics + SQL + General) -->
+            <div id="admCategoryGroup" class="admin-form-full">
+              <div class="cat-header-flex">
+                <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;">
+                  <label class="admin-input-label" style="margin-bottom:0;">
+                    LeetCode / Subject Category <span class="req">* (Multi-Select)</span>
+                  </label>
+                  <span id="admCatCountBadge" class="cat-count-badge">1 Selected</span>
+                </div>
+                <div class="cat-actions-row">
+                  <button type="button" class="cat-quick-link" onclick="selectAllAdminCategories(true)">🌟 Select All (16)</button>
+                  <span class="cat-divider">•</span>
+                  <button type="button" class="cat-quick-link" onclick="selectTopDsaCategories()">⚡ Top 75 DSA</button>
+                  <span class="cat-divider">•</span>
+                  <button type="button" class="cat-quick-link" onclick="clearAllAdminCategories()">✕ Clear</button>
+                </div>
+              </div>
+
+              <!-- Multi-Select Trigger Field -->
+              <div class="cat-multiselect-wrapper" id="admCatMultiWrapper">
+                <div class="cat-multiselect-trigger" id="admCatMultiTrigger" onclick="toggleAdminCatDropdown(event)">
+                  <div class="cat-selected-chips" id="admCatSelectedChips">
+                    <!-- Populated dynamically with active category chips -->
+                  </div>
+                  <div class="cat-trigger-arrow" id="admCatTriggerArrow">▼</div>
+                </div>
+
+                <!-- Dropdown Menu with Search & Checkbox Grid -->
+                <div class="cat-multiselect-dropdown" id="admCatDropdownMenu" style="display:none;" onclick="event.stopPropagation()">
+                  <div class="cat-dropdown-search-box">
+                    <span class="cat-search-icon">🔍</span>
+                    <input type="text" id="admCatSearchInput" class="cat-search-input" placeholder="Search categories (e.g. Arrays, Trees, Dynamic Programming)..." oninput="filterAdminCatSearch(this.value)" />
+                  </div>
+                  <div class="cat-dropdown-items-grid" id="admCatDropdownItems">
+                    <!-- Populated dynamically with all 16 LeetCode topics + SQL + General -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Hidden input holding comma-separated categories for form submission -->
+              <input type="hidden" id="admNewTestCategory" value="Arrays & Hashing" />
+            </div>
+
+            <!-- Difficulty Level -->
+            <div>
+              <label class="admin-input-label">Difficulty Level</label>
+              <select id="admNewTestDifficulty" class="admin-input-field">
+                <option value="Easy">Easy</option>
+                <option value="Medium" selected>Medium</option>
+                <option value="Hard">Hard</option>
+              </select>
+            </div>
+
+            <!-- Question Counts Distribution & Module Configuration -->
+            <div id="admQuestionDistributionSection" class="admin-form-full question-dist-card">
+              <div class="qdist-header">
+                <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;">
+                  <span style="font-size: 0.95rem; font-weight: 700; color: #fff;">📊 Question Count &amp; Module Distribution</span>
+                  <span id="admTotalQuestionsBadge" class="cat-count-badge">Total: 1 Question</span>
+                </div>
+                <span style="font-size: 0.74rem; color: #94a3b8;">Configured per active module</span>
+              </div>
+
+              <!-- Row 1: Coding Challenges Count (1 to 6 Problems) -->
+              <div id="admCodingCountRow" class="qdist-row" style="margin-top: 0.85rem;">
+                <div class="qdist-label-col">
+                  <label class="admin-input-label" style="margin-bottom:0;">💻 Coding Challenges Count</label>
+                  <span class="qdist-hint">Algorithmic coding problems (1 to 6)</span>
+                </div>
+                <div class="qdist-controls-col">
+                  <input type="number" id="admNewTestCodingCount" class="admin-input-field" min="1" max="6" value="1" style="width:75px;" oninput="updateTotalQuestionCounts()" />
+                  <div class="segmented-control" id="admCodingCountGroup">
+                    <button type="button" class="segment-btn active" onclick="selectAdminCodingCount(1, this)">1</button>
+                    <button type="button" class="segment-btn" onclick="selectAdminCodingCount(2, this)">2</button>
+                    <button type="button" class="segment-btn" onclick="selectAdminCodingCount(3, this)">3</button>
+                    <button type="button" class="segment-btn" onclick="selectAdminCodingCount(4, this)">4</button>
+                    <button type="button" class="segment-btn" onclick="selectAdminCodingCount(5, this)">5</button>
+                    <button type="button" class="segment-btn" onclick="selectAdminCodingCount(6, this)">6</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Row 2: SQL Challenges Count (1 to 6 Queries) -->
+              <div id="admSqlCountRow" class="qdist-row" style="display:none; margin-top: 0.85rem;">
+                <div class="qdist-label-col">
+                  <label class="admin-input-label" style="margin-bottom:0;">🗄️ SQL Database Challenges Count</label>
+                  <span class="qdist-hint">Live MySQL query challenges (1 to 6)</span>
+                </div>
+                <div class="qdist-controls-col">
+                  <input type="number" id="admNewTestSqlCount" class="admin-input-field" min="1" max="6" value="1" style="width:75px;" oninput="updateTotalQuestionCounts()" />
+                  <div class="segmented-control" id="admSqlCountGroup">
+                    <button type="button" class="segment-btn active" onclick="selectAdminSqlCount(1, this)">1</button>
+                    <button type="button" class="segment-btn" onclick="selectAdminSqlCount(2, this)">2</button>
+                    <button type="button" class="segment-btn" onclick="selectAdminSqlCount(3, this)">3</button>
+                    <button type="button" class="segment-btn" onclick="selectAdminSqlCount(4, this)">4</button>
+                    <button type="button" class="segment-btn" onclick="selectAdminSqlCount(5, this)">5</button>
+                    <button type="button" class="segment-btn" onclick="selectAdminSqlCount(6, this)">6</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Row 3: MCQ Questions & Tagline Block (Up to 100 MCQs) -->
+              <div id="admMcqConfigBlock" class="qdist-block" style="display:none; margin-top: 0.85rem;">
+                <div class="qdist-row" style="border-bottom:none; padding-bottom:0;">
+                  <div class="qdist-label-col">
+                    <label class="admin-input-label" style="margin-bottom:0;">📝 MCQ Questions Count</label>
+                    <span class="qdist-hint">Multiple-choice questions (up to 100)</span>
+                  </div>
+                  <div class="qdist-controls-col">
+                    <input type="number" id="admNewTestMcqCount" class="admin-input-field" min="1" max="100" value="10" style="width:85px;" oninput="updateTotalQuestionCounts()" />
+                    <div class="segmented-control" id="admMcqCountGroup">
+                      <button type="button" class="segment-btn" onclick="selectAdminMcqCount(10, this)">10</button>
+                      <button type="button" class="segment-btn active" onclick="selectAdminMcqCount(25, this)">25</button>
+                      <button type="button" class="segment-btn" onclick="selectAdminMcqCount(50, this)">50</button>
+                      <button type="button" class="segment-btn" onclick="selectAdminMcqCount(75, this)">75</button>
+                      <button type="button" class="segment-btn" onclick="selectAdminMcqCount(100, this)">100</button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- MCQ Taglines / Subtopics (YouTube-style tag boxes with small ✕ to delete) -->
+                <div class="mcq-tagline-wrapper" style="margin-top: 0.85rem;">
+                  <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.35rem;">
+                    <label class="admin-input-label" style="margin-bottom:0;">
+                      🏷️ MCQ Subtopics &amp; Syllabus Tags <span class="req">* (YouTube-Style Tags)</span>
+                    </label>
+                    <span style="font-size: 0.74rem; color: #94a3b8;">Type &amp; press comma (,) or Enter to add tags with ✕ button</span>
+                  </div>
+
+                  <div class="yt-tags-box" id="admMcqTagsBox" onclick="focusMcqTagInput()">
+                    <div id="admMcqTagChipsContainer" class="yt-tag-chips-wrapper"></div>
+                    <input type="text" id="admMcqTaglineInput" class="yt-tag-input" placeholder="Type topic &amp; press comma (,) or Enter..." onkeydown="onMcqTagKeyDown(event)" oninput="onMcqTagInput(event)" onpaste="onMcqTagPaste(event)" />
+                  </div>
+                  <input type="hidden" id="admNewTestMcqTagline" value="" />
+
+                  <div class="quick-topic-pills" style="margin-top: 0.5rem;">
+                    <span class="quick-pill-label">Suggested Taglines:</span>
+                    <span class="setup-pill" onclick="addAdminMcqTag('Data Structures &amp; Algorithms')">+ DSA</span>
+                    <span class="setup-pill" onclick="addAdminMcqTag('Object-Oriented Programming (OOP)')">+ OOP</span>
+                    <span class="setup-pill" onclick="addAdminMcqTag('Time &amp; Space Complexity (Big-O)')">+ Complexity</span>
+                    <span class="setup-pill" onclick="addAdminMcqTag('Relational Database Joins &amp; Indexing')">+ SQL &amp; DBMS</span>
+                    <span class="setup-pill" onclick="addAdminMcqTag('Recursion &amp; Dynamic Programming')">+ Recursion &amp; DP</span>
+                    <span class="setup-pill" onclick="addAdminMcqTag('Operating Systems &amp; Concurrency')">+ OS &amp; Threads</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Hidden input keeping track of total questions for backwards compatibility -->
+              <input type="hidden" id="admNewTestCount" value="1" />
+            </div>
+
+            <!-- Time Limit (with segmented quick buttons) -->
+            <div>
+              <label class="admin-input-label">Time Limit (Minutes) <span class="req">* (Compulsory)</span></label>
+              <div style="display:flex; gap:0.5rem; align-items:center;">
+                <input type="number" id="admNewTestTimeLimit" class="admin-input-field" min="5" max="180" value="30" style="width:90px;" required />
+                <div class="segmented-control" id="admTimeLimitGroup" style="flex:1;">
+                  <button type="button" class="segment-btn" onclick="selectAdminTimeLimit(15, this)">15m</button>
+                  <button type="button" class="segment-btn active" onclick="selectAdminTimeLimit(30, this)">30m</button>
+                  <button type="button" class="segment-btn" onclick="selectAdminTimeLimit(45, this)">45m</button>
+                  <button type="button" class="segment-btn" onclick="selectAdminTimeLimit(60, this)">60m</button>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label class="admin-input-label">Schedule Start Window (Optional)</label>
+              <input type="datetime-local" id="admNewTestStart" class="admin-input-field" />
+            </div>
+
+            <div>
+              <label class="admin-input-label">Schedule End / Deadline (Optional)</label>
+              <input type="datetime-local" id="admNewTestEnd" class="admin-input-field" />
+            </div>
+
+            <div class="admin-form-full">
+              <label class="admin-input-label">Proctoring Enforcement Preset</label>
+              <select id="admNewTestPreset" class="admin-input-field" onchange="onAdminPresetChange(this.value)">
+                <option value="strict" selected>Strict AI Lockdown (Camera + Mic + AI Tool Scanner + Fullscreen)</option>
+                <option value="balanced">Balanced Proctoring (Camera &amp; Audio Only, External Apps Allowed)</option>
+                <option value="practice">Practice Mode (No Proctoring Restrictions, External Apps Allowed)</option>
+              </select>
+            </div>
+
+            <!-- Granular Per-Quiz Rules in Admin Create Test -->
+            <div class="admin-form-full">
+              <label class="admin-input-label">Granular Proctoring Policy &amp; Tool Permissions</label>
+              <div class="admin-proctor-options-grid">
+                <label class="admin-proctor-opt-card">
+                  <div class="apoc-top">
+                    <span class="apoc-icon">📷</span>
+                    <input type="checkbox" id="admNewTestCamera" checked />
+                  </div>
+                  <span class="apoc-title">Camera On</span>
+                  <span class="apoc-desc">Webcam face &amp; glance tracking</span>
+                </label>
+
+                <label class="admin-proctor-opt-card">
+                  <div class="apoc-top">
+                    <span class="apoc-icon">🎙️</span>
+                    <input type="checkbox" id="admNewTestMic" checked />
+                  </div>
+                  <span class="apoc-title">Mic On</span>
+                  <span class="apoc-desc">Audio noise warnings (max 10)</span>
+                </label>
+
+                <label class="admin-proctor-opt-card">
+                  <div class="apoc-top">
+                    <span class="apoc-icon">💻</span>
+                    <input type="checkbox" id="admNewTestAllowApps" />
+                  </div>
+                  <span class="apoc-title">Allow Running Apps</span>
+                  <span class="apoc-desc">Permit apps/IDEs during exam</span>
+                </label>
+
+                <label class="admin-proctor-opt-card">
+                  <div class="apoc-top">
+                    <span class="apoc-icon">⛶</span>
+                    <input type="checkbox" id="admNewTestFullscreen" checked />
+                  </div>
+                  <span class="apoc-title">Fullscreen Lock</span>
+                  <span class="apoc-desc">Force native borderless window</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Allowed Test Attempts (Candidate Retake Limit) -->
+            <div class="admin-form-full">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.35rem;">
+                <label class="admin-input-label" style="margin-bottom:0;">
+                  🎯 Number of Allowed Attempts <span class="req">* (Candidate Retake Policy)</span>
+                </label>
+                <span style="font-size: 0.74rem; color: #94a3b8;">Count is set to 1 only when quiz is submitted</span>
+              </div>
+              <select id="admNewTestAllowedAttempts" class="admin-input-field">
+                <option value="1" selected>1 Attempt (Standard – Single attempt, closed upon quiz submission)</option>
+                <option value="2">2 Attempts (Allow 1 retake after submission)</option>
+                <option value="3">3 Attempts (Allow 2 retakes)</option>
+                <option value="5">5 Attempts (Up to 5 total submissions)</option>
+                <option value="10">10 Attempts (Training &amp; Workshops)</option>
+                <option value="999">Unlimited Attempts (No submission lock)</option>
+              </select>
+            </div>
+
+            <!-- Allowed Malpractice Strikes (Auto-Close Limit) -->
+            <div class="admin-form-full">
+              <label class="admin-input-label">Allowed Malpractice Strikes (Auto-Close Limit)</label>
+              <select id="admNewTestMaxAttempts" class="admin-input-field">
+                <option value="1">1 Strike (Zero Tolerance – Auto-closes exam on 1st violation)</option>
+                <option value="2">2 Strikes (1 Warning, Auto-closes on 2nd violation)</option>
+                <option value="3" selected>3 Strikes (Default – 2 Warnings, Auto-closes on 3rd violation)</option>
+                <option value="5">5 Strikes (Lenient – 4 Warnings, Auto-closes on 5th violation)</option>
+              </select>
+            </div>
+
+            <div class="admin-form-full">
+              <label class="admin-input-label">Instructions / Constraints for Candidates</label>
+              <textarea id="admNewTestInstructions" class="admin-input-field" placeholder="Specify any additional instructions, edge case considerations, or exam rules..."></textarea>
+            </div>
+
+            <div class="admin-form-full" style="display:flex; align-items:center; gap:0.65rem; background:rgba(99,102,241,0.1); border:1px solid rgba(99,102,241,0.3); padding:0.85rem 1.1rem; border-radius:var(--radius-sm);">
+              <input type="checkbox" id="admNewTestAssign" checked style="width:18px; height:18px; accent-color:var(--primary); cursor:pointer;" />
+              <label for="admNewTestAssign" style="font-size:0.92rem; color:#fff; font-weight:700; cursor:pointer;">
+                ⭐ Assign directly to Main App for Candidates (Showcase as Active Assessment)
+              </label>
+            </div>
+          </div>
+
+          <div class="admin-form-actions" style="display: flex; gap: 0.85rem; align-items: center; flex-wrap: wrap;">
+            <button type="button" class="admin-publish-btn" id="admPublishToMainQuizBtn" onclick="submitCreateTest(false, true)">
+              <span>📢</span>
+              <span>Publish Test to Main Quiz</span>
+            </button>
+            <button type="button" class="admin-btn-secondary" onclick="submitCreateTest(false, false)" title="Save assessment to catalog without making it live on the candidate portal">
+              <span>💾</span>
+              <span>Save to Catalog (Draft Only)</span>
+            </button>
+            <button type="button" class="admin-btn-secondary" onclick="submitCreateTest(true, true)" title="Publish and immediately launch preview candidate window">
+              <span>🚀</span>
+              <span>Publish &amp; Launch Candidate Session</span>
+            </button>
+            <div id="admCreateTestMsg" style="display:none; font-size: 0.88rem; font-weight: 600;"></div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- SUB-TAB 3: LeetCode Integration & Problem Browser -->
+    <div id="adminTabLeetCode" class="admin-tab-pane">
+      <div class="admin-card-container">
+        <div class="psc-header" style="margin-bottom: 1.25rem;">
+          <div>
+            <h2 style="font-size: 1.25rem; font-weight: 800; color: #fff;">LeetCode Problem Catalog &amp; Integration Studio</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">
+              Direct integration with LeetCode catalog across 16 algorithmic domains, multi-language starter templates (Python, Java, C++, C), and 12–15 test cases.
+            </p>
+          </div>
+          <button type="button" class="admin-btn-secondary" onclick="pickRandomLeetCodeAdmin()">
+            <span>🎲</span>
+            <span>Pick Random Problem</span>
+          </button>
+        </div>
+
+        <!-- LeetCode Account Connection & Cloud Execution Engine -->
+        <div class="ai-control-card" id="admLeetCodeAccountCard" style="margin-bottom: 1.5rem; background: linear-gradient(135deg, rgba(255,161,22,0.06), rgba(15,23,42,0.7)); border: 1px solid rgba(255,161,22,0.25);">
+          <div class="psc-header" style="margin-bottom: 0.75rem;">
+            <div style="display:flex; align-items:center; gap:0.75rem;">
+              <span style="font-size: 1.5rem;">⚡</span>
+              <div>
+                <h3 style="font-size: 1.05rem; font-weight: 800; color: #fff; display:flex; align-items:center; gap:0.5rem;">
+                  <span>LeetCode Account Integration &amp; Execution Engine</span>
+                  <span id="alcaStatusBadge" class="tbl-badge format-coding" style="font-size:0.72rem; padding:0.15rem 0.55rem;">Checking...</span>
+                </h3>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;">
+                  Connect your personal LeetCode account to sync solver telemetry, verify official test harnesses, and execute up to 15 test cases (sample + edge cases).
+                </p>
+              </div>
+            </div>
+            <div style="display:flex; gap:0.5rem; align-items:center;">
+              <button type="button" class="admin-btn-secondary" onclick="testAdminLeetCodeSync()" style="font-size:0.8rem; padding:0.4rem 0.75rem;">
+                <span>🔄</span>
+                <span>Test Live Ping</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Connected State View -->
+          <div id="alcaConnectedView" style="display:none; padding:0.75rem; background:rgba(0,0,0,0.25); border-radius:6px; border:1px solid rgba(255,161,22,0.25); margin-top:0.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+              <div style="display:flex; align-items:center; gap:0.85rem;">
+                <div style="width:40px; height:40px; border-radius:50%; background:#ffa116; display:flex; align-items:center; justify-content:center; font-weight:800; color:#000; font-size:1.1rem;" id="alcaAvatarLetter">L</div>
+                <div>
+                  <div style="display:flex; align-items:center; gap:0.5rem;">
+                    <span style="font-weight:800; color:#fff; font-size:0.98rem;" id="alcaUsername">@username</span>
+                    <span class="badge-status-pill badge-active" style="font-size:0.68rem;">Verified Connected</span>
+                  </div>
+                  <div style="font-size:0.78rem; color:var(--text-dim); margin-top:0.15rem;" id="alcaProfileSub">
+                    Global Rank: <strong id="alcaRank" style="color:#ffa116;">--</strong> | Solved: <strong id="alcaSolved" style="color:#34d399;">--</strong> | Session: <strong id="alcaMaskedSession" style="color:#94a3b8;">Active</strong>
+                  </div>
+                </div>
+              </div>
+              <div style="display:flex; gap:0.6rem; align-items:center;">
+                <button type="button" class="admin-btn-secondary" onclick="toggleLeetCodeEditMode()" style="font-size:0.8rem; padding:0.35rem 0.75rem;">
+                  <span>⚙️</span>
+                  <span>Update Credentials</span>
+                </button>
+                <button type="button" class="admin-btn-danger" onclick="disconnectAdminLeetCodeAccount()" style="font-size:0.8rem; padding:0.35rem 0.75rem;">
+                  <span>Disconnect</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Connect / Edit Form -->
+          <div id="alcaConnectForm" style="display:block; margin-top:0.75rem;">
+            <div style="display:grid; grid-template-columns: 1fr 1.5fr 1fr auto; gap:0.75rem; align-items:end;">
+              <div class="admin-form-group" style="margin-bottom:0;">
+                <label style="font-size:0.78rem; font-weight:700; color:var(--text-muted); margin-bottom:0.25rem; display:block;">LeetCode Username</label>
+                <input type="text" id="alcaInputUser" class="admin-input-field" placeholder="e.g. loki_coder" style="font-size:0.82rem; padding:0.45rem 0.65rem;" />
+              </div>
+              <div class="admin-form-group" style="margin-bottom:0;">
+                <label style="font-size:0.78rem; font-weight:700; color:var(--text-muted); margin-bottom:0.25rem; display:block;">
+                  LEETCODE_SESSION Cookie
+                  <span style="font-weight:400; color:var(--text-dim); font-size:0.7rem;">(F12 &gt; Application &gt; Cookies)</span>
+                </label>
+                <div style="position:relative;">
+                  <input type="password" id="alcaInputSession" class="admin-input-field" placeholder="Paste LEETCODE_SESSION token" style="font-size:0.82rem; padding:0.45rem 2rem 0.45rem 0.65rem;" />
+                  <button type="button" onclick="togglePasswordVisibility('alcaInputSession')" style="position:absolute; right:8px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--text-dim); cursor:pointer; font-size:0.8rem;">👁️</button>
+                </div>
+              </div>
+              <div class="admin-form-group" style="margin-bottom:0;">
+                <label style="font-size:0.78rem; font-weight:700; color:var(--text-muted); margin-bottom:0.25rem; display:block;">csrftoken (Optional)</label>
+                <input type="password" id="alcaInputCsrf" class="admin-input-field" placeholder="Paste csrftoken (optional)" style="font-size:0.82rem; padding:0.45rem 0.65rem;" />
+              </div>
+              <div>
+                <button type="button" class="admin-btn-primary" onclick="connectAdminLeetCodeAccount()" style="font-size:0.82rem; padding:0.5rem 1rem; white-space:nowrap; background:#ffa116; border-color:#ffa116; color:#000; font-weight:700;">
+                  <span>⚡ Connect Account</span>
+                </button>
+              </div>
+            </div>
+            <div id="alcaFeedback" style="display:none; font-size:0.8rem; margin-top:0.6rem; font-weight:600;"></div>
+          </div>
+        </div>
+
+        <!-- LeetCode Category Pills -->
+        <div class="leetcode-category-pills" id="admLeetCodeCatPills">
+          <!-- Populated dynamically -->
+        </div>
+
+        <!-- Filter / Search Row -->
+        <div class="admin-filter-bar">
+          <div class="admin-search-box">
+            <span class="admin-search-icon">🔍</span>
+            <input type="text" id="admLeetCodeSearch" placeholder="Search LeetCode problem title or number..." oninput="filterAdminLeetCode()" />
+          </div>
+          <select id="admLeetCodeDiffFilter" class="admin-select-filter" onchange="filterAdminLeetCode()">
+            <option value="all">All Difficulties</option>
+            <option value="Easy">Easy</option>
+            <option value="Medium">Medium</option>
+            <option value="Hard">Hard</option>
+          </select>
+        </div>
+
+        <!-- Problem Cards Grid -->
+        <div id="admLeetCodeGrid" class="leetcode-problem-grid">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- SUB-TAB 4: Taufa.ai & OmniRoute Control Center -->
+    <div id="adminTabAiControl" class="admin-tab-pane">
+      <div class="ai-control-layout">
+        <!-- Card 1: Taufa.ai Integration & Session Diagnostics -->
+        <div class="ai-control-card">
+          <div class="psc-header">
+            <div>
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: #fff;">Taufa.ai Integration &amp; Session Diagnostics</h2>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">
+                Manage reverse-proxy streaming session, Cloudflare session cookies, and live ping benchmarking.
+              </p>
+            </div>
+            <div id="admTaufaStatusBadge" class="tbl-badge format-coding">Checking...</div>
+          </div>
+
+          <div class="ai-status-row">
+            <div>
+              <div style="font-weight:700; color:#fff; font-size:0.9rem;">Session Cookie Status</div>
+              <div id="admTaufaCookieInfo" style="font-size:0.8rem; color:var(--text-dim); margin-top:0.2rem;">--</div>
+            </div>
+            <div style="display:flex; gap:0.6rem; align-items:center;">
+              <button type="button" class="admin-btn-secondary" onclick="testTaufaStreamLive()">
+                <span>⚡</span>
+                <span>Test Stream Latency</span>
+              </button>
+            </div>
+          </div>
+          <div id="admTaufaTestResult" style="display:none; margin-bottom:1rem; font-size:0.85rem;"></div>
+
+          <div class="form-group" style="margin-top:1rem;">
+            <label class="admin-input-label">Update Taufa.ai Session Cookie (from DevTools / cookie.txt)</label>
+            <textarea id="admTaufaCookieInput" class="admin-input-field" style="min-height:75px; font-family:'JetBrains Mono',monospace; font-size:0.8rem;" placeholder="Paste raw cookie header string here..."></textarea>
+            <p class="form-hint">Updating this will immediately sync with local cookie.txt and reload the streaming proxy.</p>
+          </div>
+
+          <div class="admin-form-actions">
+            <button type="button" class="admin-primary-btn" onclick="saveTaufaSession()">
+              <span>💾</span>
+              <span>Update Session Cookie</span>
+            </button>
+            <div id="admTaufaSaveMsg" style="display:none; font-size:0.88rem; font-weight:600;"></div>
+          </div>
+        </div>
+
+        <!-- Card 2: Taufa.ai Command Prompt Templates (Control Commands) -->
+        <div class="ai-control-card">
+          <div class="psc-header">
+            <div>
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: #fff;">Taufa.ai Command Prompt Studio</h2>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">
+                Control and customize the natural language commands and JSON schemas transmitted to Taufa.ai when generating tests.
+              </p>
+            </div>
+          </div>
+
+          <!-- Prompt Tabs -->
+          <div class="prompt-template-tabs">
+            <button type="button" class="prompt-tab-btn active" onclick="switchPromptTab('mcq', this)">📝 MCQ Command Template</button>
+            <button type="button" class="prompt-tab-btn" onclick="switchPromptTab('coding', this)">💻 LeetCode Coding Command Template</button>
+            <button type="button" class="prompt-tab-btn" onclick="switchPromptTab('sql', this)">🗄️ SQL Query Command Template</button>
+          </div>
+
+          <div>
+            <textarea id="admPromptTemplateEditor" class="prompt-editor-textarea" spellcheck="false"></textarea>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.4rem; font-size:0.78rem; color:var(--text-dim);">
+              <span>Available tokens: <code>{topic}</code>, <code>{numQ}</code>, <code>{category}</code>, <code>{difficulty}</code></span>
+              <span class="admin-autofill-link" onclick="resetCurrentPromptDefault()">Reset This Command to Factory Default</span>
+            </div>
+          </div>
+
+          <div class="admin-form-actions" style="margin-top:1.25rem;">
+            <button type="button" class="admin-primary-btn" onclick="savePromptCommands()">
+              <span>💾</span>
+              <span>Save Command Templates</span>
+            </button>
+            <div id="admPromptSaveMsg" style="display:none; font-size:0.88rem; font-weight:600;"></div>
+          </div>
+
+          <!-- Interactive Live Command Sandbox -->
+          <div class="prompt-test-box">
+            <div style="font-weight:700; color:#fff; font-size:0.9rem; margin-bottom:0.5rem;">🧪 Live Command Execution Sandbox</div>
+            <div style="display:flex; gap:0.6rem; align-items:center;">
+              <input type="text" id="admSandboxTopic" class="admin-input-field" placeholder="Enter test topic (e.g. Binary Search Trees)" style="flex:1;" />
+              <button type="button" class="admin-btn-secondary" onclick="executeSandboxPrompt()">
+                <span>🚀</span>
+                <span>Send to Taufa.ai</span>
+              </button>
+            </div>
+            <div id="admSandboxOutput" class="prompt-output-preview" style="display:none;"></div>
+          </div>
+        </div>
+
+        <!-- Card 3: OmniRoute API Configuration & Health -->
+        <div class="ai-control-card">
+          <div class="psc-header">
+            <div>
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: #fff;">OmniRoute API Configuration &amp; Health</h2>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">
+                Configure local or remote OpenAI-compatible OmniRoute server, select models, and test cross-verification connectivity.
+              </p>
+            </div>
+            <div id="admOmniStatusBadge" class="tbl-badge format-hybrid">Checking...</div>
+          </div>
+
+          <div class="admin-form-grid" style="margin-top:1.25rem;">
+            <div>
+              <label class="admin-input-label">OmniRoute Server Endpoint URL</label>
+              <input type="text" id="admOmniUrlInput" class="admin-input-field" placeholder="http://localhost:20128/v1/chat/completions" onpaste="onOmniRouteInputPaste(event, this)" oninput="scheduleOmniRoutePingDebounced()" />
+            </div>
+
+            <div>
+              <label class="admin-input-label">Model Identifier</label>
+              <input type="text" id="admOmniModelInput" class="admin-input-field" placeholder="gpt-4o-mini" oninput="scheduleOmniRoutePingDebounced()" />
+            </div>
+
+            <div class="admin-form-full">
+              <label class="admin-input-label">OmniRoute API Key (Optional – paste here to test)</label>
+              <input type="password" id="admOmniKeyInput" class="admin-input-field" placeholder="Enter API Key if authenticated..." onpaste="onOmniRouteInputPaste(event, this)" oninput="scheduleOmniRoutePingDebounced()" />
+            </div>
+          </div>
+
+          <div class="ai-status-row" style="margin-top:1.25rem;">
+            <div>
+              <div style="font-weight:700; color:#fff; font-size:0.9rem;">Headless Server Process</div>
+              <div id="admOmniProcessStatus" style="font-size:0.8rem; color:var(--text-dim); margin-top:0.2rem;">Checking background port 20128...</div>
+            </div>
+            <div style="display:flex; gap:0.6rem; align-items:center;">
+              <button type="button" class="admin-btn-secondary" onclick="restartOmniRouteProcess()">
+                <span>🔄</span>
+                <span>Restart Headless Server</span>
+              </button>
+              <button type="button" class="admin-btn-secondary" onclick="testOmniRouteLive()">
+                <span>⚡</span>
+                <span>Ping Connection</span>
+              </button>
+            </div>
+          </div>
+          <div id="admOmniTestResult" style="display:none; margin-bottom:1rem; font-size:0.85rem;"></div>
+
+          <div class="admin-form-actions">
+            <button type="button" class="admin-primary-btn" onclick="saveOmniRouteConfig()">
+              <span>💾</span>
+              <span>Save OmniRoute Config</span>
+            </button>
+            <div id="admOmniSaveMsg" style="display:none; font-size:0.88rem; font-weight:600;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUB-TAB 3: Proctoring System Settings -->
+    <div id="adminTabProctor" class="admin-tab-pane">
+      <div class="admin-card-container">
+        <div class="psc-header" style="margin-bottom: 1.5rem;">
+          <div>
+            <h2 style="font-size: 1.25rem; font-weight: 800; color: #fff;">Proctoring Security Rules &amp; Policies</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">
+              Configure tolerances, detection thresholds, and automated disqualification criteria applied across all proctored exams.
+            </p>
+          </div>
+        </div>
+
+        <div class="proctor-settings-grid">
+          <!-- Control 1: Max Tab Switches -->
+          <div class="proctor-setting-card">
+            <div class="psc-header">
+              <div class="psc-title">
+                <span>📑</span>
+                <span>Max Tab / Window Switches</span>
+              </div>
+            </div>
+            <p class="psc-desc">Threshold before immediate test termination for leaving or blurring the test window.</p>
+            <div class="psc-control">
+              <div class="psc-slider-row">
+                <input type="range" id="admInputTabSwitches" min="0" max="5" value="1" oninput="updateProctorSliderLabel('admValTabSwitches', this.value, 'switch')" />
+                <span class="psc-slider-badge" id="admValTabSwitches">1 switch</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Control 2: Max Sound / Noise Warnings -->
+          <div class="proctor-setting-card">
+            <div class="psc-header">
+              <div class="psc-title">
+                <span>🎙️</span>
+                <span>Max Sound / Noise Warnings</span>
+              </div>
+            </div>
+            <p class="psc-desc">Number of detected talking/noise audio strikes (RMS &gt; 35) before disqualification.</p>
+            <div class="psc-control">
+              <div class="psc-slider-row">
+                <input type="range" id="admInputSoundWarnings" min="3" max="25" value="10" oninput="updateProctorSliderLabel('admValSoundWarnings', this.value, 'warnings')" />
+                <span class="psc-slider-badge" id="admValSoundWarnings">10 warnings</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Control 3: Glance-Away Tolerance -->
+          <div class="proctor-setting-card">
+            <div class="psc-header">
+              <div class="psc-title">
+                <span>👀</span>
+                <span>Glance-Away / Absence Tolerance</span>
+              </div>
+            </div>
+            <p class="psc-desc">Continuous seconds candidate can look away from camera or leave the frame before termination.</p>
+            <div class="psc-control">
+              <div class="psc-slider-row">
+                <input type="range" id="admInputAwaySec" min="10" max="60" value="25" oninput="updateProctorSliderLabel('admValAwaySec', this.value, 'seconds')" />
+                <span class="psc-slider-badge" id="admValAwaySec">25 seconds</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Control 4: Low Lighting Guard -->
+          <div class="proctor-setting-card">
+            <div class="psc-header">
+              <div class="psc-title">
+                <span>💡</span>
+                <span>Environmental Lighting Guard</span>
+              </div>
+              <label class="toggle-switch-label">
+                <input type="checkbox" id="admToggleLighting" checked />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <p class="psc-desc">Monitors webcam pixel luminance and alerts candidate when lighting is insufficient for face detection.</p>
+          </div>
+
+          <!-- Control 5: AI & Prohibited Process Blacklist -->
+          <div class="proctor-setting-card">
+            <div class="psc-header">
+              <div class="psc-title">
+                <span>🤖</span>
+                <span>External AI Companion Blocker</span>
+              </div>
+              <label class="toggle-switch-label">
+                <input type="checkbox" id="admToggleAntiAi" checked />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <p class="psc-desc">Scans running Windows processes for ChatGPT, Claude, Copilot, Comet, Cursor, Ollama, and cheat tools.</p>
+          </div>
+
+          <!-- Control 6: Fullscreen Lockdown -->
+          <div class="proctor-setting-card">
+            <div class="psc-header">
+              <div class="psc-title">
+                <span>🔒</span>
+                <span>Hardware Fullscreen Lockdown</span>
+              </div>
+              <label class="toggle-switch-label">
+                <input type="checkbox" id="admToggleFullscreen" checked />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <p class="psc-desc">Locks native window into borderless fullscreen and prevents escape without administrative override.</p>
+          </div>
+
+          <!-- Control 7: Dual AI Cross-Verification -->
+          <div class="proctor-setting-card">
+            <div class="psc-header">
+              <div class="psc-title">
+                <span>🧠</span>
+                <span>Dual AI Verification Engine</span>
+              </div>
+              <label class="toggle-switch-label">
+                <input type="checkbox" id="admToggleDualAi" checked />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <p class="psc-desc">Cross-validates MCQ answers and generates AI explanations using the OmniRoute engine.</p>
+          </div>
+
+          <!-- Control 8: OmniRoute API Key -->
+          <div class="proctor-setting-card">
+            <div class="psc-header">
+              <div class="psc-title">
+                <span>🔑</span>
+                <span>OmniRoute API Key</span>
+              </div>
+            </div>
+            <p class="psc-desc">API authentication key used by ProctorIQ when communicating with local or remote OmniRoute server.</p>
+            <div class="psc-control">
+              <input type="password" id="admInputOmniKey" class="admin-input-field" placeholder="Enter OmniRoute API Key (optional)" />
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-form-actions" style="margin-top: 2rem;">
+          <button type="button" class="admin-primary-btn" onclick="saveAdminProctorSettings()">
+            <span>💾</span>
+            <span>Save &amp; Apply Proctoring Policy</span>
+          </button>
+          <div id="admProctorSaveMsg" style="display:none; font-size: 0.88rem; font-weight: 600;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUB-TAB 4: Pre-Built Test Catalog -->
+    <div id="adminTabCatalog" class="admin-tab-pane">
+      <div class="admin-filter-bar" style="margin-bottom: 1.5rem;">
+        <span style="font-weight: 700; color: #fff; font-size: 0.95rem;">Available Published Assessments</span>
+        <div style="margin-left: auto; display: flex; gap: 0.5rem; align-items: center;">
+          <button class="admin-btn-danger" onclick="resetMainQuizData()" title="Unassign all tests and reset candidate portal to awaiting state">
+            <span>🧹</span>
+            <span>Reset Main Quiz / Portal</span>
+          </button>
+          <button class="admin-btn-secondary" onclick="switchAdminTab('create', document.querySelectorAll('.admin-subtab-btn')[1])">
+            <span>➕</span>
+            <span>Create Another Test</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="admCatalogGrid" class="catalog-grid">
+        <!-- Dynamically populated by app.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 5. MALPRACTICE LOCKDOWN OVERLAY ===== -->
+  <div id="malpracticeOverlay" class="overlay-block" style="display:none">
+    <div class="malpractice-dialog">
+      <div class="malpractice-icon">🚨</div>
+      <h1 class="malpractice-title">EXAM TERMINATED</h1>
+      <div class="malpractice-badge">Malpractice Detected</div>
+      <p id="malpracticeReason" class="malpractice-desc">Suspicious proctoring violation detected.</p>
+      <div class="malpractice-notice">
+        This incident has been recorded. All progress on this test has been locked in accordance with assessment integrity standards.
+      </div>
+      <div style="display: flex; gap: 0.75rem; justify-content: center; align-items: center; margin-top: 1.25rem; flex-wrap: wrap;">
+        <button class="malpractice-exit-btn" onclick="forceEndTest()">Acknowledge &amp; Exit</button>
+        <button type="button" class="admin-btn-secondary" onclick="openBugReportModal('Malpractice Lockdown', 'False positive malpractice detection dispute')" style="border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1); padding: 0.75rem 1.25rem; display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 700;">
+          <span>🐞</span>
+          <span>Report False Malpractice / Appeal</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 6. TAB-SWITCH / MALPRACTICE WARNING MODAL ===== -->
+  <div id="tabWarningOverlay" class="overlay-block" style="display:none">
+    <div class="warning-dialog">
+      <div class="warning-icon">⚠️</div>
+      <h1 class="warning-title">Proctoring &amp; Malpractice Warning</h1>
+      <p id="tabWarnCount" class="warning-count-text">Attempt 1 of 3.</p>
+      <p id="tabWarnNote" class="warning-note">Switching tabs, minimizing the exam window, or pressing forbidden keys (Alt, Ctrl, Tab) violates proctoring protocols. When you reach the allowed attempts assigned by your administrator, your exam will be automatically closed and disqualified.</p>
+      <div style="display: flex; gap: 0.75rem; justify-content: center; align-items: center; margin-top: 1.25rem; flex-wrap: wrap;">
+        <button class="warning-resume-btn" onclick="dismissTabWarning()">I Understand – Return to Exam</button>
+        <button type="button" class="admin-btn-secondary" onclick="openBugReportModal('Security Warning Modal', 'Unexpected security / tab switch warning trigger')" style="border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; background: rgba(245, 158, 11, 0.1); padding: 0.75rem 1.25rem; display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 700;">
+          <span>🐞</span>
+          <span>Report Technical Issue</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 7. ADMIN LOGIN MODAL ===== -->
+  <div id="adminLoginModal" style="display:none">
+    <div class="admin-login-card">
+      <div class="alc-header">
+        <div class="alc-icon">🛡️</div>
+        <h2 class="alc-title">Administrator Sign In</h2>
+        <p class="alc-sub">Enter credentials to access candidate telemetry, overall statistics, and proctoring controls</p>
+      </div>
+
+      <div id="admLoginError" class="admin-login-error" style="display:none"></div>
+
+      <form id="adminLoginForm" onsubmit="event.preventDefault(); loginAdmin();">
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label class="admin-input-label">Username</label>
+          <input type="text" id="admLoginUser" class="admin-input-field" placeholder="loki1234" autocomplete="username" required />
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1.25rem;">
+          <label class="admin-input-label">Password</label>
+          <input type="password" id="admLoginPass" class="admin-input-field" placeholder="••••••••••••" autocomplete="current-password" required />
+        </div>
+
+        <button type="submit" class="admin-primary-btn" style="width: 100%; justify-content: center;">
+          <span>🛡️</span>
+          <span>Sign In to Dashboard</span>
+        </button>
+
+        <div class="admin-autofill-hint">
+          <span>Preset: <strong>loki1234</strong></span>
+          <span class="admin-autofill-link" onclick="autofillAdminCredentials()">Click to Autofill</span>
+        </div>
+
+        <div style="text-align: center; margin-top: 1.25rem;">
+          <button type="button" class="admin-btn-secondary" style="font-size: 0.82rem;" onclick="closeAdminLoginModal()">
+            Cancel &amp; Return
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== 8. TEST AUDIT DETAIL MODAL ===== -->
+  <div id="adminAuditModal" style="display:none">
+    <div class="admin-audit-card">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div>
+          <span class="admin-badge-shield">Session Audit Report</span>
+          <h2 id="audModalTitle" style="font-size: 1.35rem; font-weight: 800; color: #fff; margin-top: 0.35rem;">Candidate Session</h2>
+          <p id="audModalSub" style="font-size: 0.85rem; color: var(--text-muted);"></p>
+        </div>
+        <div style="display: flex; gap: 0.65rem; align-items: center;">
+          <button id="audDeleteBtn" type="button" class="admin-btn-secondary" style="color: #f87171; border-color: rgba(239, 68, 68, 0.35); background: rgba(239, 68, 68, 0.08); font-weight: 600; cursor: pointer;" title="Delete this session record">
+            <span>🗑️</span>
+            <span>Delete Record</span>
+          </button>
+          <button type="button" class="admin-btn-secondary" onclick="closeAdminAuditModal()">✕ Close</button>
+        </div>
+      </div>
+
+      <div class="audit-grid">
+        <div class="audit-stat-box">
+          <div class="asb-label">Score Earned</div>
+          <div class="asb-val" id="audScoreVal">--%</div>
+        </div>
+        <div class="audit-stat-box">
+          <div class="asb-label">Outcome Status</div>
+          <div class="asb-val" id="audStatusVal">--</div>
+        </div>
+        <div class="audit-stat-box">
+          <div class="asb-label">Tab Switches</div>
+          <div class="asb-val" id="audTabVal">0</div>
+        </div>
+        <div class="audit-stat-box">
+          <div class="asb-label">Audio / Noise Warnings</div>
+          <div class="asb-val" id="audSoundVal">0</div>
+        </div>
+      </div>
+
+      <div id="audViolationSection" style="display: none;">
+        <div style="font-weight: 700; color: #f87171; font-size: 0.88rem; margin-bottom: 0.35rem;">Disqualification Violation:</div>
+        <div id="audViolationReason" class="audit-violation-box"></div>
+      </div>
+
+      <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--surface-border); padding: 1rem; border-radius: var(--radius-sm); font-size: 0.85rem; margin-top: 1rem;">
+        <div style="font-weight: 700; color: #fff; margin-bottom: 0.5rem;">Proctoring Session Configuration</div>
+        <div id="audProctorOptionsBadges" style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.75rem;"></div>
+        <p style="color: var(--text-muted); margin-bottom: 0.3rem;">• <strong>Audit Signature</strong>: Cryptographically hashed integrity token</p>
+        <p style="color: var(--text-muted); margin-bottom: 0.3rem;">• <strong>Visual Monitoring</strong>: Webcam facial alignment &amp; luminance validation active</p>
+        <p style="color: var(--text-muted);">• <strong>Audio Monitoring</strong>: Web Audio API FFT spectrum noise analysis active</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 9. ADMIN LEETCODE PROBLEM INSPECTOR MODAL ===== -->
+  <div id="adminLeetCodeModal" style="display:none">
+    <div class="admin-modal-card" style="max-width: 820px;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem;">
+        <div>
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+            <span class="admin-badge-shield" id="alcModalCategory">Dynamic Programming</span>
+            <span id="alcModalDifficulty" class="badge-status-pill badge-neutral">Medium</span>
+          </div>
+          <h2 id="alcModalTitle" style="font-size: 1.35rem; font-weight: 800; color: #fff; margin: 0;">Problem Title</h2>
+        </div>
+        <button type="button" class="admin-btn-secondary" onclick="closeAdminLeetCodeModal()">✕ Close</button>
+      </div>
+
+      <div style="max-height: 58vh; overflow-y: auto; padding-right: 0.5rem; display: flex; flex-direction: column; gap: 1.25rem;">
+        <div>
+          <div style="font-weight: 700; color: #cbd5e1; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.4rem;">Problem Description</div>
+          <div id="alcModalDescription" class="cw-markdown-content" style="background: rgba(15, 23, 42, 0.6); padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--surface-border); font-size: 0.9rem; line-height: 1.55;"></div>
+        </div>
+
+        <div>
+          <div style="font-weight: 700; color: #cbd5e1; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.4rem;">Starter Code (Python)</div>
+          <pre style="background: #08090f; border: 1px solid var(--surface-border); border-radius: var(--radius-sm); padding: 0.85rem; overflow-x: auto; font-family: monospace; font-size: 0.84rem; color: #38bdf8; margin: 0;"><code id="alcModalStarterCode"></code></pre>
+        </div>
+
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+            <div style="font-weight: 700; color: #cbd5e1; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em;">Curated Test Cases</div>
+            <span id="alcModalTcCount" style="font-size: 0.78rem; font-weight: 700; color: #34d399;">12 test cases</span>
+          </div>
+          <div id="alcModalTestcasesList" style="display: flex; flex-direction: column; gap: 0.45rem;"></div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--surface-border);">
+        <button type="button" class="admin-btn-secondary" onclick="closeAdminLeetCodeModal()">Close</button>
+        <button type="button" class="admin-primary-btn" id="alcModalQuickFillBtn" onclick="applyLeetCodeToCreateTest()">
+          <span>⚡</span>
+          <span>Create Test With This Problem</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 10. ADMIN TEST SCHEDULE & ASSIGN MODAL ===== -->
+  <div id="adminScheduleModal" style="display:none">
+    <div class="admin-modal-card" style="max-width: 540px;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem;">
+        <div>
+          <span class="admin-badge-shield">Assessment Dispatcher</span>
+          <h2 id="schedModalTestTitle" style="font-size: 1.25rem; font-weight: 800; color: #fff; margin-top: 0.25rem;">Schedule &amp; Assign Test</h2>
+        </div>
+        <button type="button" class="admin-btn-secondary" onclick="closeAdminScheduleModal()">✕</button>
+      </div>
+
+      <form id="adminScheduleForm" onsubmit="event.preventDefault(); saveScheduleModalData();">
+        <input type="hidden" id="schedModalTestId" />
+
+        <div style="background: rgba(15, 23, 42, 0.6); padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--surface-border); margin-bottom: 1.25rem;">
+          <label style="margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.75rem; cursor: pointer;">
+            <input type="checkbox" id="schedModalIsAssigned" style="width: 18px; height: 18px; accent-color: var(--primary);" />
+            <span style="font-weight: 700; color: #fff; font-size: 0.95rem;">Assign as Active Candidate Test</span>
+          </label>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0; padding-left: 1.9rem;">
+            When active, candidates opening the app will see this exam featured directly on the landing page ready to launch.
+          </p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+          <div>
+            <label class="admin-input-label">Scheduled Start Time</label>
+            <input type="datetime-local" id="schedModalStart" class="admin-input-field" />
+            <span style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-top: 0.25rem;">Immediate if left blank</span>
+          </div>
+          <div>
+            <label class="admin-input-label">Deadline / Expiration</label>
+            <input type="datetime-local" id="schedModalEnd" class="admin-input-field" />
+            <span style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-top: 0.25rem;">No expiration if left blank</span>
+          </div>
+        </div>
+
+        <!-- Per-Quiz Proctoring Override in Schedule Modal -->
+        <div style="margin-bottom: 1.25rem;">
+          <label class="admin-input-label" style="margin-bottom: 0.5rem; display: block;">Per-Quiz Proctoring Rules &amp; Application Policy</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem;">
+            <label style="display: flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.03); border: 1px solid var(--surface-border); padding: 0.6rem 0.75rem; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.82rem; color: #fff;">
+              <input type="checkbox" id="schedModalCamera" checked style="accent-color: var(--primary); width:16px; height:16px;" />
+              <span>📷 Camera On</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.03); border: 1px solid var(--surface-border); padding: 0.6rem 0.75rem; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.82rem; color: #fff;">
+              <input type="checkbox" id="schedModalMic" checked style="accent-color: var(--primary); width:16px; height:16px;" />
+              <span>🎙️ Mic On</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.03); border: 1px solid var(--surface-border); padding: 0.6rem 0.75rem; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.82rem; color: #fff;">
+              <input type="checkbox" id="schedModalAllowApps" style="accent-color: var(--primary); width:16px; height:16px;" />
+              <span>💻 Allow Run Apps</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.03); border: 1px solid var(--surface-border); padding: 0.6rem 0.75rem; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.82rem; color: #fff;">
+              <input type="checkbox" id="schedModalFullscreen" checked style="accent-color: var(--primary); width:16px; height:16px;" />
+              <span>⛶ Fullscreen Lock</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Allowed Candidate Attempts in Schedule Modal -->
+        <div style="margin-bottom: 1.25rem;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.35rem;">
+            <label class="admin-input-label" style="margin-bottom:0;">🎯 Allowed Exam Attempts (Candidate Retake Limit)</label>
+            <span style="font-size: 0.74rem; color: #94a3b8;">Counted only upon submission</span>
+          </div>
+          <select id="schedModalAllowedAttempts" class="admin-input-field">
+            <option value="1" selected>1 Attempt (Standard – Single attempt, closed upon quiz submission)</option>
+            <option value="2">2 Attempts (Allow 1 retake after submission)</option>
+            <option value="3">3 Attempts (Allow 2 retakes)</option>
+            <option value="5">5 Attempts (Up to 5 total submissions)</option>
+            <option value="10">10 Attempts (Training &amp; Workshops)</option>
+            <option value="999">Unlimited Attempts (No submission lock)</option>
+          </select>
+        </div>
+
+        <!-- Allowed Malpractice Attempts in Schedule Modal -->
+        <div style="margin-bottom: 1.25rem;">
+          <label class="admin-input-label">Allowed Malpractice Attempts (Auto-Close Limit)</label>
+          <select id="schedModalMaxAttempts" class="admin-input-field">
+            <option value="1">1 Attempt (Zero Tolerance – Auto-closes exam on 1st strike)</option>
+            <option value="2">2 Attempts (1 Warning, Auto-closes on 2nd strike)</option>
+            <option value="3" selected>3 Attempts (Default – 2 Warnings, Auto-closes on 3rd strike)</option>
+            <option value="5">5 Attempts (Lenient – 4 Warnings, Auto-closes on 5th strike)</option>
+          </select>
+        </div>
+
+        <div id="schedModalStatusMsg" style="display:none; font-size: 0.85rem; font-weight: 600; margin-bottom: 1rem;"></div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.75rem;">
+          <button type="button" class="admin-btn-danger" style="font-size:0.8rem; padding:0.45rem 0.8rem;" onclick="unassignTestFromModal()" title="Unassign this test from candidate portal">
+            <span>🚫</span>
+            <span>Unassign from Portal</span>
+          </button>
+          <div style="display: flex; gap: 0.75rem;">
+            <button type="button" class="admin-btn-secondary" onclick="closeAdminScheduleModal()">Cancel</button>
+            <button type="submit" class="admin-primary-btn">
+              <span>📅</span>
+              <span>Save Schedule &amp; Assignment</span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div> <!-- /adminScheduleModal -->
+
+  <!-- Floating Bug & Issue Report Action Button (Available to candidate and admin everywhere) -->
+  <div id="floatingReportContainer" class="floating-report-container">
+    <button type="button" class="floating-report-btn" onclick="openBugReportModal()" title="Report Bug or Issue">
+      <span class="frb-icon">🐞</span>
+      <span class="frb-text">Report Issue</span>
+    </button>
+  </div>
+
+  <!-- ===== BUG / ISSUE REPORT MODAL (COMMON FOR CANDIDATE & ADMIN) ===== -->
+  <div id="bugReportModal" style="display:none">
+    <div class="admin-modal-card" style="max-width: 580px;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem;">
+        <div>
+          <span class="admin-badge-shield" style="background:rgba(245,158,11,0.15); border-color:rgba(245,158,11,0.35); color:#fbbf24;">🐞 Issue &amp; Bug Reporter</span>
+          <h2 style="font-size: 1.25rem; font-weight: 800; color: #fff; margin-top: 0.25rem;">Submit Bug Report</h2>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;">All reports are safely appended into <code>bug_reports.txt</code> without overwriting previous logs.</p>
+        </div>
+        <button type="button" class="admin-btn-secondary" onclick="closeBugReportModal()">✕</button>
+      </div>
+
+      <form id="bugReportForm" onsubmit="event.preventDefault(); submitBugReportForm();">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+          <div>
+            <label class="admin-input-label">Reporter Name <span class="req">*</span></label>
+            <input type="text" id="bugReportName" class="admin-input-field" placeholder="Candidate or Admin Name" required />
+          </div>
+          <div>
+            <label class="admin-input-label">Reporter Role</label>
+            <select id="bugReportRole" class="admin-input-field">
+              <option value="Candidate">Candidate</option>
+              <option value="Administrator">Administrator</option>
+              <option value="Invigilator / Instructor">Invigilator / Instructor</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+          <div>
+            <label class="admin-input-label">Category</label>
+            <select id="bugReportCategory" class="admin-input-field">
+              <option value="Exam / Questions">Exam / Questions</option>
+              <option value="Code Compiler / Testcases">Code Compiler / Testcases</option>
+              <option value="Proctoring &amp; Lockdown">Proctoring &amp; Lockdown</option>
+              <option value="Timer &amp; Navigation">Timer &amp; Navigation</option>
+              <option value="UI &amp; Visual Design">UI &amp; Visual Design</option>
+              <option value="Admin Dashboard &amp; Scheduling">Admin Dashboard &amp; Scheduling</option>
+              <option value="Other / General">Other / General</option>
+            </select>
+          </div>
+          <div>
+            <label class="admin-input-label">Current View / Screen</label>
+            <input type="text" id="bugReportScreen" class="admin-input-field" placeholder="e.g. Quiz Screen, Admin Portal" />
+          </div>
+        </div>
+
+        <div style="margin-bottom: 1rem;">
+          <label class="admin-input-label">Issue Summary / Headline <span class="req">*</span></label>
+          <input type="text" id="bugReportSummary" class="admin-input-field" placeholder="Brief summary of the issue encountered" required />
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+          <label class="admin-input-label">Detailed Description &amp; Steps to Reproduce <span class="req">*</span></label>
+          <textarea id="bugReportDesc" class="admin-input-field" style="min-height: 100px;" placeholder="Please describe what happened, what you expected, and steps to reproduce..." required></textarea>
+        </div>
+
+        <div id="bugReportFeedback" style="display:none; font-size: 0.85rem; font-weight: 600; margin-bottom: 1rem; padding: 0.65rem 0.9rem; border-radius: var(--radius-sm);"></div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+          <button type="button" class="admin-btn-secondary" onclick="closeBugReportModal()">Cancel</button>
+          <button type="submit" id="bugReportSubmitBtn" class="admin-primary-btn" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #000; font-weight: 800;">
+            <span>🐞</span>
+            <span>Submit Report</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== ADMIN BUG REPORTS LOG VIEWER MODAL ===== -->
+  <div id="adminViewBugReportsModal" style="display:none">
+    <div class="admin-modal-card" style="max-width: 820px; width: 95%;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+        <div>
+          <span class="admin-badge-shield">System Log Telemetry</span>
+          <h2 style="font-size: 1.25rem; font-weight: 800; color: #fff; margin-top: 0.25rem;">Recorded Bug Reports (bug_reports.txt)</h2>
+          <p id="adminBugReportsPath" style="font-size: 0.78rem; color: var(--text-dim); margin-top: 0.2rem; font-family: 'JetBrains Mono', monospace;"></p>
+        </div>
+        <button type="button" class="admin-btn-secondary" onclick="closeAdminViewBugReportsModal()">✕</button>
+      </div>
+
+      <div style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+        <span id="adminBugReportsCount" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Loading reports...</span>
+        <div style="display: flex; gap: 0.5rem;">
+          <button type="button" class="admin-btn-secondary" onclick="viewAllBugReportsModal()" style="font-size: 0.8rem; padding: 0.4rem 0.75rem;">
+            <span>🔄</span> Refresh
+          </button>
+          <button type="button" class="admin-btn-secondary" onclick="copyBugReportsLog()" style="font-size: 0.8rem; padding: 0.4rem 0.75rem;">
+            <span>📋</span> Copy Log
+          </button>
+        </div>
+      </div>
+
+      <pre id="adminBugReportsLogViewer" style="background: #050609; border: 1px solid var(--surface-border); border-radius: var(--radius-sm); padding: 1rem; color: #38bdf8; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; line-height: 1.55; max-height: 480px; overflow: auto; white-space: pre-wrap; word-break: break-all;"></pre>
+
+      <div style="display: flex; justify-content: flex-end; margin-top: 1.25rem;">
+        <button type="button" class="admin-btn-secondary" onclick="closeAdminViewBugReportsModal()">Close Viewer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== GLOBAL REUSABLE COMPREHENSIVE EXAM & PROCTORING REPORT MODAL (Section 9) ===== -->
+  <div id="comprehensiveReportModal" class="comp-report-modal-backdrop" style="display:none">
+    <div class="comp-report-modal-card">
+      <div class="crm-header">
+        <div>
+          <div class="crm-badge-row">
+            <span class="admin-badge-shield">GLOBAL ASSESSMENT &amp; PROCTORING REPORT</span>
+            <span id="crmAttemptBadge" class="crm-attempt-pill">Attempt #1</span>
+            <span id="crmStatusBadge" class="crm-status-pill submitted">SUBMITTED</span>
+          </div>
+          <h2 id="crmExamTitle" class="crm-title">Comprehensive Examination Report</h2>
+          <p id="crmSubtitle" class="crm-subtitle">Candidate: Student • Completed Just Now</p>
+        </div>
+        <div class="crm-header-actions">
+          <button type="button" class="admin-btn-secondary" onclick="window.print()" title="Print / Save PDF Report">🖨️ Print</button>
+          <button type="button" class="admin-btn-secondary" id="crmCloseBtn" onclick="closeExamAttemptReport()">✕ Close</button>
+        </div>
+      </div>
+
+      <div class="crm-body" id="crmBodyContent">
+        <!-- Populated dynamically by openExamAttemptReport() -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Core Scripts -->
+  <script src="marked.min.js"></script>
+  <script src="highlight.min.js"></script>
+  <script src="static_backend.js"></script>
+  <script src="config.js"></script>
+  <script src="leetcode.js"></script>
+  <script src="sql_catalog.js"></script>
+  <script src="api.js"></script>
+  <script src="proctor.js"></script>
+  <script src="quiz.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
